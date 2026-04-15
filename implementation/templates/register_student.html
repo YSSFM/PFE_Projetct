@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouvel étudiant - RecoJY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/background.css') }}">
+    
+    <style>
+        .preview-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ffd700;
+            margin-bottom: 15px;
+        }
+        
+        .image-preview {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">Reco<span>JY</span></div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/admin/logout" class="logout-btn">Déconnexion</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>📝 Nouvel étudiant</h2>
+                </div>
+                <div class="card-body">
+                    <div class="image-preview">
+                        <img id="preview" class="preview-image" src="" alt="Visage capturé">
+                        <p>Visage capturé</p>
+                    </div>
+                    
+                    <form id="studentForm">
+                        <div class="form-group">
+                            <label>Matricule *</label>
+                            <input type="text" id="matricule" required placeholder="Ex: 2024001">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Nom *</label>
+                            <input type="text" id="nom" required placeholder="Nom">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Prénom *</label>
+                            <input type="text" id="prenom" required placeholder="Prénom">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Département</label>
+                            <select id="departement_id">
+                                <option value="1">Informatique</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Sexe</label>
+                            <select id="sexe">
+                                <option value="M">Masculin</option>
+                                <option value="F">Féminin</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Téléphone</label>
+                            <input type="tel" id="telephone" placeholder="Ex: 77 123 45 67">
+                        </div>
+                        
+                        <button type="submit">💾 Enregistrer l'étudiant</button>
+                    </form>
+                    
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="/dashboard">← Retour au dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Charger l'image temporaire
+        async function loadTempImage() {
+            try {
+                const response = await fetch('/get_temp_encoding');
+                const data = await response.json();
+                
+                if (data.success && data.image) {
+                    document.getElementById('preview').src = 'data:image/jpeg;base64,' + data.image;
+                } else {
+                    document.getElementById('preview').src = 'https://via.placeholder.com/150?text=Erreur';
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+        
+        // Sauvegarder l'étudiant
+        document.getElementById('studentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const data = {
+                nom: document.getElementById('nom').value.trim(),
+                prenom: document.getElementById('prenom').value.trim(),
+                matricule: document.getElementById('matricule').value.trim(),
+                departement_id: document.getElementById('departement_id').value,
+                sexe: document.getElementById('sexe').value,
+                telephone: document.getElementById('telephone').value.trim()
+            };
+            
+            if (!data.nom || !data.prenom || !data.matricule) {
+                alert('Veuillez remplir tous les champs obligatoires');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/save_new_student', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('✅ ' + result.message);
+                    window.location.href = '/dashboard';
+                } else {
+                    alert('❌ ' + result.error);
+                }
+            } catch (error) {
+                alert('❌ Erreur lors de l\'enregistrement');
+            }
+        });
+        
+        loadTempImage();
+    </script>
+</body>
+</html>

@@ -1,0 +1,481 @@
+/* -------------------------------------------------------------------
+        RESET ET STYLES DE BASE
+        ------------------------------------------------------------------- */
+        
+        /* Suppression des marges et paddings par défaut */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Corps de la page avec ANIMATION d'arrière-plan */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            
+            /* Animation pour alterner les images de fond */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            animation: dynamicBackground 24s infinite alternate ease-in-out;
+            
+            /* Hauteur minimale = 100% de la fenêtre */
+            min-height: 100vh;
+            
+            /* Position relative pour le positionnement des éléments */
+            position: relative;
+        }
+        
+        /* Animation pour alterner les images de fond */
+        @keyframes dynamicBackground {
+            0% { 
+                background-image: url('/static/images/bg_space.jpg'); 
+            }
+            25% { 
+                background-image: url('/static/images/bg_abstract.jpg'); 
+            }
+            50% { 
+                background-image: url('/static/images/bg_tech.jpg'); 
+            }
+            75% { 
+                background-image: url('/static/images/bg_minimal.jpg'); 
+            }
+            100% { 
+                background-image: url('/static/images/bg_space.jpg'); 
+            }
+        }
+        
+        /* Overlay semi-transparent pour assombrir l'arrière-plan */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: saturate(110%) blur(3px);
+            z-index: 0;
+        }
+        
+        /* Conteneur principal (tout le contenu est au-dessus de l'overlay) */
+        .container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* -------------------------------------------------------------------
+        BARRE DE NAVIGATION (HAUT DE PAGE)
+        ------------------------------------------------------------------- */
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;  /* Padding réduit */
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Logo / Nom de l'application (côté gauche) */
+        .logo {
+            font-size: 24px;  /* Taille réduite */
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 2px;
+        }
+        
+        /* Accentuation de la partie "JY" dans RecoJY */
+        .logo span {
+            color: #ffd700;
+            font-size: 28px;  /* Taille réduite */
+        }
+        
+        /* Navigation (côté droit) */
+        .nav-links {
+            display: flex;
+            gap: 20px;  /* Espacement réduit */
+        }
+        
+        /* Style des liens de navigation */
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;  /* Taille réduite */
+            font-weight: 500;
+            padding: 6px 14px;  /* Padding réduit */
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        /* Effet au survol des liens */
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* Style spécial pour le bouton "Se connecter" dans la nav */
+        .nav-links .btn-nav {
+            background-color: #ffd700;
+            color: #1a1a2e;
+            font-weight: bold;
+        }
+        
+        .nav-links .btn-nav:hover {
+            background-color: #ffed4a;
+            transform: translateY(-2px);
+        }
+        
+        /* -------------------------------------------------------------------
+        CONTENU PRINCIPAL (CARTE CENTRALE RÉDUITE)
+        ------------------------------------------------------------------- */
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 20px;  /* Padding réduit */
+        }
+        
+        /* Carte centrale avec effet GLASSMORPHISME - TAILLE RÉDUITE */
+        .hero-card {
+            max-width: 750px;  /* RÉDUIT: 1000px → 750px */
+            width: 100%;
+            background: rgba(15, 15, 25, 0.65);
+            backdrop-filter: blur(30px) saturate(150%);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 24px;  /* Bordure légèrement réduite */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);  /* Ombre réduite */
+            overflow: hidden;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        /* Disposition en deux colonnes */
+        .hero-grid {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        /* Colonne de gauche : images en alternance */
+        .hero-image {
+            flex: 0.8;  /* Facteur réduit */
+            min-width: 250px;  /* Largeur minimale réduite */
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.7), rgba(118, 75, 162, 0.7));
+            padding: 25px;  /* Padding réduit */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Conteneur pour le carrousel d'images */
+        .image-carousel {
+            position: relative;
+            width: 100%;
+            height: 200px;  /* Hauteur RÉDUITE: 260px → 200px */
+            overflow: hidden;
+            border-radius: 16px;  /* Bordure réduite */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Images du carrousel */
+        .carousel-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+            border-radius: 16px;
+        }
+        
+        /* Image active (visible) */
+        .carousel-slide.active {
+            opacity: 1;
+        }
+        
+        /* Indicateurs de navigation du carrousel */
+        .carousel-dots {
+            display: flex;
+            gap: 8px;  /* Espacement réduit */
+            margin-top: 12px;  /* Marge réduite */
+            justify-content: center;
+        }
+        
+        .dot {
+            width: 6px;  /* Taille réduite */
+            height: 6px;  /* Taille réduite */
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .dot.active {
+            background-color: #ffd700;
+            width: 20px;  /* Largeur réduite */
+            border-radius: 10px;
+        }
+        
+        .dot:hover {
+            background-color: #ffffff;
+            transform: scale(1.2);
+        }
+        
+        /* Flèches de navigation du carrousel */
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            color: white;
+            border: none;
+            width: 28px;  /* Taille réduite */
+            height: 28px;  /* Taille réduite */
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;  /* Taille réduite */
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .carousel-arrow:hover {
+            background-color: rgba(102, 126, 234, 0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .arrow-left {
+            left: 8px;  /* Position ajustée */
+        }
+        
+        .arrow-right {
+            right: 8px;  /* Position ajustée */
+        }
+        
+        /* Colonne de droite : texte explicatif */
+        .hero-text {
+            flex: 1.2;
+            min-width: 250px;  /* Largeur minimale réduite */
+            padding: 25px;  /* Padding RÉDUIT: 40px → 25px */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        /* Titre de la colonne de droite */
+        .hero-text h1 {
+            font-size: 26px;  /* Taille RÉDUITE: 32px → 26px */
+            color: #ffffff;
+            margin-bottom: 12px;  /* Marge réduite */
+        }
+        
+        .hero-text h1 span {
+            color: #ffd700;
+        }
+        
+        /* Description de la technologie */
+        .hero-text p {
+            font-size: 14px;  /* Taille RÉDUITE: 16px → 14px */
+            line-height: 1.5;  /* Interligne réduit */
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 12px;  /* Marge réduite */
+        }
+        
+        /* Liste des avantages */
+        .features {
+            list-style: none;
+            margin: 10px 0;  /* Marge réduite */
+        }
+        
+        .features li {
+            display: flex;
+            align-items: center;
+            gap: 8px;  /* Espacement réduit */
+            margin-bottom: 8px;  /* Marge réduite */
+            font-size: 13px;  /* Taille RÉDUITE: 15px → 13px */
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .features li::before {
+            content: "✓";
+            color: #28a745;
+            font-weight: bold;
+            font-size: 14px;  /* Taille réduite */
+        }
+        
+        /* -------------------------------------------------------------------
+        BOUTONS (BAS DE LA CARTE)
+        ------------------------------------------------------------------- */
+        
+        .button-group {
+            display: flex;
+            gap: 15px;  /* Espacement réduit */
+            margin-top: 20px;  /* Marge RÉDUITE: 25px → 20px */
+            margin-bottom: 25px;  /* Marge RÉDUITE: 30px → 25px */
+            padding: 0 25px;  /* Padding réduit */
+            justify-content: center;
+        }
+        
+        /* Style commun pour les boutons */
+        .btn {
+            padding: 10px 25px;  /* Padding RÉDUIT: 14px 35px → 10px 25px */
+            font-size: 14px;  /* Taille RÉDUITE: 16px → 14px */
+            font-weight: bold;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        /* Bouton Se connecter (principal) */
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 3px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        /* Bouton Créer un compte (secondaire) */
+        .btn-secondary {
+            background-color: transparent;
+            color: #a0a0ff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* -------------------------------------------------------------------
+        PIED DE PAGE
+        ------------------------------------------------------------------- */
+        
+        .footer {
+            text-align: center;
+            padding: 15px;  /* Padding réduit */
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;  /* Taille réduite */
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        
+        /* -------------------------------------------------------------------
+        ANIMATIONS
+        ------------------------------------------------------------------- */
+        
+        /* Animation de fondu pour l'apparition de la carte */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero-card {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        /* -------------------------------------------------------------------
+        RESPONSIVE (ADAPTATION MOBILE)
+        ------------------------------------------------------------------- */
+        
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 12px 20px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .logo {
+                font-size: 20px;
+            }
+            
+            .logo span {
+                font-size: 24px;
+            }
+            
+            .nav-links {
+                gap: 12px;
+            }
+            
+            .hero-text {
+                padding: 20px;
+            }
+            
+            .hero-text h1 {
+                font-size: 22px;
+            }
+            
+            .hero-text p {
+                font-size: 13px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+                padding: 0 20px 20px 20px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+            }
+            
+            .hero-image {
+                padding: 20px;
+            }
+            
+            .image-carousel {
+                height: 160px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-links a {
+                font-size: 12px;
+                padding: 5px 10px;
+            }
+            
+            .hero-text h1 {
+                font-size: 18px;
+            }
+            
+            .hero-card {
+                max-width: 95%;
+            }
+            
+            .image-carousel {
+                height: 140px;
+            }
+            
+            .hero-text p {
+                font-size: 12px;
+            }
+            
+            .features li {
+                font-size: 11px;
+            }
+            
+            .btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+        }

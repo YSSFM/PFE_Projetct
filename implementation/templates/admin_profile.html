@@ -1,0 +1,182 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <h2>👤 Mon profil</h2>
+    </div>
+    
+    <div class="card-body">
+        <div id="profileInfo">
+            <div style="margin-bottom:20px;">
+                <label style="font-weight:bold; color:#555; display:block; margin-bottom:5px;">Nom complet :</label>
+                <p id="fullName" style="font-size:18px; color:#333;">-</p>
+            </div>
+            
+            <div style="margin-bottom:20px;">
+                <label style="font-weight:bold; color:#555; display:block; margin-bottom:5px;">Nom d'utilisateur :</label>
+                <p id="displayUsername" style="font-size:18px; color:#333;">-</p>
+            </div>
+            
+            <div style="margin-bottom:20px;">
+                <label style="font-weight:bold; color:#555; display:block; margin-bottom:5px;">Email :</label>
+                <p id="displayEmail" style="font-size:18px; color:#333;">-</p>
+            </div>
+            
+            <div style="margin-bottom:20px;">
+                <label style="font-weight:bold; color:#555; display:block; margin-bottom:5px;">Membre depuis :</label>
+                <p id="displayCreatedAt" style="font-size:18px; color:#333;">-</p>
+            </div>
+            
+            <button onclick="openEditModal()">
+                Modifier mes informations
+            </button>
+            
+            <button onclick="window.location.href='/dashboard'" style="background:linear-gradient(135deg, #6c757d 0%, #495057 100%); margin-top:10px;">
+                ← Retour au dashboard
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de modification -->
+<div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+    <div style="background:white; border-radius:20px; width:90%; max-width:450px;">
+        <div style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; padding:20px; border-radius:20px 20px 0 0; display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="margin:0;">Modifier mon profil</h3>
+            <button onclick="closeEditModal()" style="background:none; border:none; color:white; font-size:24px; cursor:pointer; width:auto; margin:0;">&times;</button>
+        </div>
+        <div style="padding:25px;">
+            <input type="text" id="editNom" placeholder="Nom" style="width:100%; margin-bottom:15px;">
+            <input type="text" id="editPrenom" placeholder="Prénom" style="width:100%; margin-bottom:15px;">
+            <input type="email" id="editEmail" placeholder="Email" style="width:100%; margin-bottom:15px;">
+            <input type="text" id="editUsername" placeholder="Nom d'utilisateur" style="width:100%;">
+        </div>
+        <div style="padding:20px; display:flex; gap:10px; justify-content:flex-end; border-top:1px solid #eee;">
+            <button onclick="closeEditModal()" style="padding:10px 20px; background:#6c757d; color:white; border:none; border-radius:8px; cursor:pointer; width:auto;">Annuler</button>
+            <button onclick="saveProfile()" style="padding:10px 20px; background:#28a745; color:white; border:none; border-radius:8px; cursor:pointer; width:auto;">Enregistrer</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 10px;
+        color: white;
+        font-weight: bold;
+        z-index: 1100;
+        animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    .notification.success { background-color: #28a745; }
+    .notification.error { background-color: #dc3545; }
+</style>
+
+<script>
+    const editModal = document.getElementById('editModal');
+    
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = message;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 4000);
+    }
+    
+    async function loadProfile() {
+        try {
+            const response = await fetch('/admin/api/profile');
+            const data = await response.json();
+            
+            if (response.ok) {
+                document.getElementById('fullName').textContent = `${data.nom} ${data.prenom}`;
+                document.getElementById('displayUsername').textContent = data.username;
+                document.getElementById('displayEmail').textContent = data.email;
+                if (data.created_at) {
+                    const date = new Date(data.created_at);
+                    document.getElementById('displayCreatedAt').textContent = date.toLocaleDateString('fr-FR');
+                }
+            } else {
+                showNotification('Erreur lors du chargement du profil', 'error');
+            }
+        } catch (error) {
+            showNotification('Erreur de connexion', 'error');
+        }
+    }
+    
+    function openEditModal() {
+        const fullName = document.getElementById('fullName').textContent;
+        const nameParts = fullName.split(' ');
+        const nom = nameParts[0] || '';
+        const prenom = nameParts.slice(1).join(' ') || '';
+        
+        document.getElementById('editNom').value = nom;
+        document.getElementById('editPrenom').value = prenom;
+        document.getElementById('editEmail').value = document.getElementById('displayEmail').textContent;
+        document.getElementById('editUsername').value = document.getElementById('displayUsername').textContent;
+        
+        editModal.style.display = 'flex';
+    }
+    
+    function closeEditModal() {
+        editModal.style.display = 'none';
+    }
+    
+    async function saveProfile() {
+        const data = {
+            nom: document.getElementById('editNom').value.trim(),
+            prenom: document.getElementById('editPrenom').value.trim(),
+            email: document.getElementById('editEmail').value.trim(),
+            username: document.getElementById('editUsername').value.trim()
+        };
+        
+        if (!data.nom || !data.prenom || !data.email || !data.username) {
+            showNotification('Veuillez remplir tous les champs', 'error');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/admin/api/profile', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                showNotification('✅ Profil mis à jour avec succès', 'success');
+                closeEditModal();
+                loadProfile();
+            } else {
+                showNotification('❌ ' + result.error, 'error');
+            }
+        } catch (error) {
+            showNotification('❌ Erreur lors de la sauvegarde', 'error');
+        }
+    }
+    
+    editModal.addEventListener('click', function(e) {
+        if (e.target === editModal) closeEditModal();
+    });
+    
+    loadProfile();
+</script>
+
+{% endblock %}

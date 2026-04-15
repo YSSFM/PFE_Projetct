@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erreur 500 - RecoJY</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .error-container {
+            text-align: center;
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            max-width: 500px;
+            margin: 20px;
+        }
+        
+        .error-code {
+            font-size: 100px;
+            font-weight: bold;
+            color: #f5576c;
+            margin-bottom: 20px;
+        }
+        
+        .error-message {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .error-description {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .btn-home {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn-home:hover {
+            transform: translateY(-3px);
+        }
+        
+        .contact-link {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .contact-link a {
+            color: #f5576c;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">500</div>
+        <div class="error-message">Erreur interne du serveur</div>
+        <div class="error-description">
+            Une erreur inattendue s'est produite. Nos équipes ont été notifiées.
+            <br><br>
+            Veuillez réessayer plus tard.
+        </div>
+        <a href="/" class="btn-home">🏠 Retour à l'accueil</a>
+        <div class="contact-link">
+            <a href="/admin">🔐 Accès administrateur</a>
+        </div>
+    </div>
+</body>
+</html>

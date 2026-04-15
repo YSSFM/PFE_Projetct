@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des étudiants - RecoJY</title>
+    
+    <style>
+        /* -------------------------------------------------------------------
+        STYLES DE LA PAGE DE GESTION DES ÉTUDIANTS
+        ------------------------------------------------------------------- */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        /* Barre de navigation */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .logo span {
+            color: #ffd700;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .logout-btn {
+            background-color: #dc3545;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+        
+        /* Conteneur principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        /* En-tête */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 28px;
+        }
+        
+        .btn-add {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-add:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+        
+        /* Tableau des étudiants */
+        .table-container {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .badge-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        /* Boutons d'action */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-edit {
+            background-color: #ffc107;
+            color: #1a1a2e;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-edit:hover {
+            background-color: #e0a800;
+        }
+        
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            font-size: 20px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn-save {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .btn-cancel {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            z-index: 1100;
+            animation: slideInRight 0.3s ease;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .notification.success {
+            background-color: #28a745;
+        }
+        
+        .notification.error {
+            background-color: #dc3545;
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 18px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barre de navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            Reco<span>JY</span>
+        </div>
+        <div class="nav-links">
+            <a href="/dashboard">🏠 Dashboard</a>
+			 <a href="/">Accueil</a>
+            <a href="/admin/logout" class="logout-btn">🚪 Déconnexion</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <!-- En-tête -->
+        <div class="header">
+            <h1>👨‍🎓 Gestion des étudiants</h1>
+            <button class="btn-add" onclick="openAddModal()">
+                ➕ Ajouter un étudiant
+            </button>
+        </div>
+        
+        <!-- Tableau des étudiants -->
+        <div class="table-container">
+            <table id="studentsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Matricule</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Département</th>
+                        <th>Visage</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsTableBody">
+                    <tr>
+                        <td colspan="7" class="loading">Chargement des étudiants...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Modal d'ajout/modification -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Ajouter un étudiant</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="studentForm">
+                    <input type="hidden" id="studentId" value="">
+                    
+                    <div class="form-group">
+                        <label>Matricule *</label>
+                        <input type="text" id="matricule" required placeholder="Ex: 2024001">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Nom *</label>
+                        <input type="text" id="nom" required placeholder="Ex: MOUSSA">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Prénom *</label>
+                        <input type="text" id="prenom" required placeholder="Ex: Youssouf">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Département *</label>
+                        <select id="departement_id" required>
+                            <option value="">Sélectionner un département</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Sexe</label>
+                        <select id="sexe">
+                            <option value="M">Masculin</option>
+                            <option value="F">Féminin</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Téléphone</label>
+                        <input type="tel" id="telephone" placeholder="Ex: 77 123 45 67">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Année académique</label>
+                        <input type="text" id="annee_academique" placeholder="Ex: 2024-2025">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Semestre</label>
+                        <select id="semestre">
+                            <option value="">Sélectionner</option>
+                            <option value="S1">Semestre 1</option>
+                            <option value="S2">Semestre 2</option>
+                            <option value="S3">Semestre 3</option>
+                            <option value="S4">Semestre 4</option>
+                            <option value="S5">Semestre 5</option>
+                            <option value="S6">Semestre 6</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+                <button class="btn-save" onclick="saveStudent()">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Variables globales
+        let currentEditId = null;
+        let departements = [];
+        
+        /**
+         * Affiche une notification
+         */
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        /**
+         * Charge la liste des départements
+         */
+        async function loadDepartements() {
+            try {
+                const response = await fetch('/api/departements');
+                const data = await response.json();
+                departements = data;
+                
+                const select = document.getElementById('departement_id');
+                select.innerHTML = '<option value="">Sélectionner un département</option>';
+                
+                data.forEach(dept => {
+                    const option = document.createElement('option');
+                    option.value = dept.id;
+                    option.textContent = dept.nom;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Erreur chargement départements:', error);
+            }
+        }
+        
+        /**
+         * Charge la liste des étudiants
+         */
+        async function loadStudents() {
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" class="loading">Chargement...</td></tr>';
+            
+            try {
+                const response = await fetch('/api/students');
+                const students = await response.json();
+                
+                if (students.error) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="loading">❌ ${students.error}</td></tr>`;
+                    return;
+                }
+                
+                if (students.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="loading">📭 Aucun étudiant trouvé</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = '';
+                
+                students.forEach(student => {
+                    const row = tbody.insertRow();
+                    
+                    row.insertCell(0).textContent = student.id;
+                    row.insertCell(1).textContent = student.matricule;
+                    row.insertCell(2).textContent = student.nom;
+                    row.insertCell(3).textContent = student.prenom;
+                    row.insertCell(4).textContent = student.departement_nom || '-';
+                    
+                    // Badge visage
+                    const faceCell = row.insertCell(5);
+                    if (student.has_face) {
+                        faceCell.innerHTML = '<span class="badge badge-success">✅ Enregistré</span>';
+                    } else {
+                        faceCell.innerHTML = '<span class="badge badge-warning">⚠️ Non enregistré</span>';
+                    }
+                    
+                    // Boutons d'action
+                    const actionsCell = row.insertCell(6);
+                    actionsCell.className = 'action-buttons';
+                    actionsCell.innerHTML = `
+                        <button class="btn-edit" onclick="editStudent(${student.id})">✏️ Modifier</button>
+                        <button class="btn-delete" onclick="deleteStudent(${student.id})">🗑️ Supprimer</button>
+                    `;
+                });
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                tbody.innerHTML = `<tr><td colspan="7" class="loading">❌ Erreur de chargement: ${error.message}</td></tr>`;
+            }
+        }
+        
+        /**
+         * Ouvre le modal d'ajout
+         */
+        function openAddModal() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = 'Ajouter un étudiant';
+            document.getElementById('studentForm').reset();
+            document.getElementById('studentId').value = '';
+            document.getElementById('studentModal').classList.add('active');
+        }
+        
+        /**
+         * Ouvre le modal de modification
+         */
+        async function editStudent(id) {
+            try {
+                const response = await fetch(`/api/students/${id}`);
+                const student = await response.json();
+                
+                if (student.error) {
+                    showNotification(student.error, 'error');
+                    return;
+                }
+                
+                currentEditId = id;
+                document.getElementById('modalTitle').textContent = 'Modifier l\'étudiant';
+                document.getElementById('studentId').value = student.id;
+                document.getElementById('matricule').value = student.matricule;
+                document.getElementById('nom').value = student.nom;
+                document.getElementById('prenom').value = student.prenom;
+                document.getElementById('departement_id').value = student.departement_id;
+                document.getElementById('sexe').value = student.sexe || 'M';
+                document.getElementById('telephone').value = student.telephone || '';
+                document.getElementById('annee_academique').value = student.annee_academique || '';
+                document.getElementById('semestre').value = student.semestre || '';
+                
+                document.getElementById('studentModal').classList.add('active');
+                
+            } catch (error) {
+                showNotification('Erreur lors du chargement de l\'étudiant', 'error');
+            }
+        }
+        
+        /**
+         * Sauvegarde un étudiant (ajout ou modification)
+         */
+        async function saveStudent() {
+            const id = document.getElementById('studentId').value;
+            const data = {
+                matricule: document.getElementById('matricule').value,
+                nom: document.getElementById('nom').value,
+                prenom: document.getElementById('prenom').value,
+                departement_id: document.getElementById('departement_id').value,
+                sexe: document.getElementById('sexe').value,
+                telephone: document.getElementById('telephone').value,
+                annee_academique: document.getElementById('annee_academique').value,
+                semestre: document.getElementById('semestre').value
+            };
+            
+            // Validation
+            if (!data.matricule || !data.nom || !data.prenom || !data.departement_id) {
+                showNotification('Veuillez remplir tous les champs obligatoires (*)', 'error');
+                return;
+            }
+            
+            try {
+                let response;
+                if (id) {
+                    // Modification
+                    response = await fetch(`/api/students/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    // Ajout
+                    response = await fetch('/api/students', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                }
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showNotification(result.message, 'success');
+                    closeModal();
+                    loadStudents();
+                } else {
+                    showNotification(result.error, 'error');
+                }
+                
+            } catch (error) {
+                showNotification('Erreur lors de la sauvegarde', 'error');
+            }
+        }
+        
+        /**
+         * Supprime un étudiant
+         */
+        async function deleteStudent(id) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cet étudiant ?\nCette action est irréversible et supprimera également son historique de présence.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/students/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showNotification(result.message, 'success');
+                    loadStudents();
+                } else {
+                    showNotification(result.error, 'error');
+                }
+                
+            } catch (error) {
+                showNotification('Erreur lors de la suppression', 'error');
+            }
+        }
+        
+        /**
+         * Ferme le modal
+         */
+        function closeModal() {
+            document.getElementById('studentModal').classList.remove('active');
+            document.getElementById('studentForm').reset();
+            currentEditId = null;
+        }
+        
+        /**
+         * Ferme le modal en cliquant à l'extérieur
+         */
+        document.getElementById('studentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        /**
+         * Initialisation de la page
+         */
+        async function init() {
+            await loadDepartements();
+            await loadStudents();
+        }
+        
+        // Lancement de l'initialisation
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecoJY - À propos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/index.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- -------------------------------------------------------------------
+        BARRE DE NAVIGATION HAUT
+        ------------------------------------------------------------------- -->
+        <nav class="navbar">
+            <div class="logo">
+                Reco<span>JY</span>
+            </div>
+            <div class="nav-links">
+                <a href="/">Accueil</a>
+                <a href="/admin" class="btn-nav">Se connecter</a>
+            </div>
+        </nav>
+        
+        <!-- -------------------------------------------------------------------
+        CONTENU PRINCIPAL
+        ------------------------------------------------------------------- -->
+        <div class="main-content">
+            <div class="hero-card">
+                <div class="hero-grid">
+                    
+                    <!-- Colonne GAUCHE : Logo / Icône -->
+                    <div class="hero-image">
+                        <div class="image-carousel" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(102, 126, 234, 0.5), rgba(118, 75, 162, 0.5));">
+                            <div style="text-align: center; padding: 20px;">
+                                <div style="font-size: 80px; margin-bottom: 15px;">👨‍💻</div>
+                                <div style="font-size: 18px; font-weight: bold; color: white;">RecoJY</div>
+                                <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 5px;">Version 1.0</div>
+                            </div>
+                        </div>
+                        <div class="carousel-dots" style="margin-top: 10px;">
+                            <div class="dot" style="background-color: #ffd700; width: 25px; border-radius: 10px;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Colonne DROITE : Contenu À propos -->
+                    <div class="hero-text">
+                        <h1>À <span>propos</span></h1>
+                        
+                        <h2 style="font-size: 18px; color: #ffd700; margin: 15px 0 10px 0;">📌 Présentation de l'application</h2>
+                       
+                            <div class="logo"><strong>Reco<span>JY</span> (<span>J</span>ean et <span>Y</span>oussouf)</strong> 
+							</div> 
+						 <p>
+							est un système innovant de <strong> reconnaissance faciale</strong>
+							conçu pour automatiser la gestion des présences des étudiants.
+                            Développé dans le cadre d'un Projet de Fin d'Études (PFE), 
+                            cette application utilise des algorithmes d'intelligence artificielle (DL et CNN) 
+                            pour identifier les visages en temps réel et marquer automatiquement 
+                            les présences.
+                        </p>
+                        
+                        <h2 style="font-size: 18px; color: #ffd700; margin: 15px 0 10px 0;">⚙️ Fonctionnalités principales</h2>
+                        <ul class="features">
+                            <li>Reconnaissance faciale en temps réel via webcam</li>
+                            <li>Enregistrement automatique des présences</li>
+                            <li>Gestion complète des étudiants (CRUD)</li>
+                            <li>Génération de rapports PDF</li>
+                            <li>Interface administrateur sécurisée</li>
+                            <li>Base de données MySQL pour le stockage</li>
+                        </ul>
+                        
+                        <h2 style="font-size: 18px; color: #ffd700; margin: 15px 0 10px 0;">🛠️ Technologies utilisées</h2>
+                        <ul class="features">
+                            <li>Python / Flask - Backend</li>
+                            <li>Face Recognition / OpenCV - Reconnaissance faciale</li>
+                            <li>MySQL - Base de données</li>
+                            <li>HTML5 / CSS3 - Frontend</li>
+                            <li>ReportLab - Génération PDF</li>
+                        </ul>
+                        
+                        <h2 style="font-size: 18px; color: #ffd700; margin: 15px 0 10px 0;">👤 À propos des développeurs</h2>
+                        <p>
+                            Ce projet a été développé par <strong>Youssouf Moussa</strong> et <strong>Bogou Dametote Jean</strong>,
+                            étudiants en DUT en Informatique à l'ESTM au Maroc. Passionnés par l'intelligence artificielle et
+							les technos émergentes, ce projet vise à démontrer l'application pratique de la reconnaissance
+                            faciale dans le domaine   de l'éducation.
+                          
+                        </p>
+                        
+                        <div class="button-group" style="margin-top: 20px;">
+                            <a href="/" class="btn btn-secondary">← Retour à l'accueil</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- -------------------------------------------------------------------
+        PIED DE PAGE
+        ------------------------------------------------------------------- -->
+        <footer class="footer">
+            &copy; 2026 RecoJY - Système de Reconnaissance Faciale. Tous droits réservés.
+        </footer>
+    </div>
+</body>
+</html>

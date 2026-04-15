@@ -1,0 +1,233 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <h2>Créer un compte administrateur</h2>
+    </div>
+    
+    <div class="card-body">
+        <form id="registerForm">
+            <input type="text"
+                   id="nom"
+                   name="nom"
+                   placeholder="Nom *"
+                   required
+                   style="margin-bottom:15px;">
+            
+            <input type="text"
+                   id="prenom"
+                   name="prenom"
+                   placeholder="Prénom *"
+                   required
+                   style="margin-bottom:15px;">
+            
+            <input type="email"
+                   id="email"
+                   name="email"
+                   placeholder="Email *"
+                   required
+                   style="margin-bottom:15px;">
+            
+            <input type="text"
+                   id="username"
+                   name="username"
+                   placeholder="Nom d'utilisateur *"
+                   required
+                   style="margin-bottom:15px;">
+            
+            <input type="password"
+                   id="password"
+                   name="password"
+                   placeholder="Mot de passe *"
+                   required
+                   style="margin-bottom:10px;">
+            
+            <input type="password"
+                   id="confirmPassword"
+                   name="confirmPassword"
+                   placeholder="Confirmer le mot de passe *"
+                   required>
+            
+            <div id="passwordRequirements" style="font-size:12px; color:#666; margin-top:10px; margin-bottom:5px;">
+                <div id="reqLength" style="margin:2px 0;">❌ Au moins 8 caractères</div>
+                <div id="reqUpper" style="margin:2px 0;">❌ Au moins une majuscule</div>
+                <div id="reqLower" style="margin:2px 0;">❌ Au moins une minuscule</div>
+                <div id="reqNumber" style="margin:2px 0;">❌ Au moins un chiffre</div>
+            </div>
+            
+            <button type="submit">
+                Créer mon compte
+            </button>
+        </form>
+        
+        <div style="text-align:center; margin-top:20px; padding-top:15px; border-top:1px solid #eee;">
+            Déjà un compte ? <a href="/admin">Se connecter</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .valid { color: #28a745 !important; }
+    .invalid { color: #dc3545 !important; }
+    
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 10px;
+        color: white;
+        font-weight: bold;
+        z-index: 1100;
+        animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    .notification.success { background-color: #28a745; }
+    .notification.error { background-color: #dc3545; }
+    
+    input.error {
+        border: 2px solid #dc3545 !important;
+    }
+</style>
+
+<script>
+    const form = document.getElementById('registerForm');
+    const nomInput = document.getElementById('nom');
+    const prenomInput = document.getElementById('prenom');
+    const emailInput = document.getElementById('email');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const confirmInput = document.getElementById('confirmPassword');
+    
+    const reqLength = document.getElementById('reqLength');
+    const reqUpper = document.getElementById('reqUpper');
+    const reqLower = document.getElementById('reqLower');
+    const reqNumber = document.getElementById('reqNumber');
+    
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = message;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 4000);
+    }
+    
+    function validateEmail(email) {
+        const re = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+        return re.test(email);
+    }
+    
+    function validatePassword(password) {
+        const hasLength = password.length >= 8;
+        const hasUpper = /[A-Z]/.test(password);
+        const hasLower = /[a-z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        
+        reqLength.innerHTML = (hasLength ? '✅' : '❌') + ' Au moins 8 caractères';
+        reqUpper.innerHTML = (hasUpper ? '✅' : '❌') + ' Au moins une majuscule';
+        reqLower.innerHTML = (hasLower ? '✅' : '❌') + ' Au moins une minuscule';
+        reqNumber.innerHTML = (hasNumber ? '✅' : '❌') + ' Au moins un chiffre';
+        
+        reqLength.className = hasLength ? 'valid' : 'invalid';
+        reqUpper.className = hasUpper ? 'valid' : 'invalid';
+        reqLower.className = hasLower ? 'valid' : 'invalid';
+        reqNumber.className = hasNumber ? 'valid' : 'invalid';
+        
+        return hasLength && hasUpper && hasLower && hasNumber;
+    }
+    
+    function validateConfirm(password, confirm) {
+        return password === confirm && password !== '';
+    }
+    
+    passwordInput.addEventListener('input', function() {
+        validatePassword(this.value);
+        if (confirmInput.value) {
+            const isValid = validateConfirm(this.value, confirmInput.value);
+            if (isValid) {
+                confirmInput.classList.remove('error');
+            } else {
+                confirmInput.classList.add('error');
+            }
+        }
+    });
+    
+    confirmInput.addEventListener('input', function() {
+        const isValid = validateConfirm(passwordInput.value, this.value);
+        if (isValid) {
+            this.classList.remove('error');
+        } else {
+            this.classList.add('error');
+        }
+    });
+    
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        document.querySelectorAll('input').forEach(input => input.classList.remove('error'));
+        
+        const nom = nomInput.value.trim();
+        const prenom = prenomInput.value.trim();
+        const email = emailInput.value.trim();
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
+        const confirmPassword = confirmInput.value;
+        
+        let isValid = true;
+        
+        if (!nom) { nomInput.classList.add('error'); isValid = false; }
+        if (!prenom) { prenomInput.classList.add('error'); isValid = false; }
+        if (!validateEmail(email)) { emailInput.classList.add('error'); isValid = false; }
+        if (!username) { usernameInput.classList.add('error'); isValid = false; }
+        if (!validatePassword(password)) { passwordInput.classList.add('error'); isValid = false; }
+        if (!validateConfirm(password, confirmPassword)) { confirmInput.classList.add('error'); isValid = false; }
+        
+        if (!isValid) {
+            showNotification('Veuillez corriger les erreurs', 'error');
+            return;
+        }
+        
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '⏳ Création en cours...';
+        submitBtn.disabled = true;
+        
+        try {
+            const response = await fetch('/admin/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nom, prenom, email, username, password })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                showNotification('✅ Compte créé avec succès ! Redirection...', 'success');
+                setTimeout(() => window.location.href = '/admin', 2000);
+            } else {
+                showNotification('❌ ' + data.error, 'error');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        } catch (error) {
+            showNotification('❌ Erreur lors de l\'inscription', 'error');
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+</script>
+
+{% endblock %}

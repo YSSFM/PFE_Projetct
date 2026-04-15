@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - RecoJY</title>
+    
+    <style>
+        /* -------------------------------------------------------------------
+        STYLES DU DASHBOARD ADMIN
+        ------------------------------------------------------------------- */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        /* Barre de navigation */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .logo span {
+            color: #ffd700;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-name {
+            color: white;
+            font-size: 16px;
+        }
+        
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        /* Conteneur principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* En-tête du dashboard */
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .dashboard-header h1 {
+            color: white;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .dashboard-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+        }
+        
+        /* Grille des cartes */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        /* Style des cartes */
+        .card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: white;
+        }
+        
+        .card-header h2 {
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .card-body p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .card-footer {
+            padding: 15px 25px 25px 25px;
+        }
+        
+        /* Style des boutons */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            color: #1a1a2e;
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+        }
+        
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+        
+        /* Zone de statut */
+        .status-area {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .status-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-message {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #495057;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        /* Messages de notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .notification.success {
+            background-color: #28a745;
+        }
+        
+        .notification.error {
+            background-color: #dc3545;
+        }
+        
+        .notification.info {
+            background-color: #17a2b8;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 28px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barre de navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            Reco<span>JY</span>
+        </div>
+        <div class="user-info">
+            <span class="user-name">👋 Bonjour, {{ username | default('Admin') }}</span>
+            <a href="/admin/logout" class="logout-btn">🚪 Déconnexion</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <!-- En-tête -->
+        <div class="dashboard-header">
+            <h1>Tableau de bord Administrateur</h1>
+            <p>Gérez la reconnaissance faciale et les présences des étudiants</p>
+        </div>
+        
+        <!-- Grille des cartes -->
+        <div class="cards-grid">
+            
+
+<!-- CARTE 1 : Enregistrement d'un NOUVEAU visage -->
+<div class="card">
+    <div class="card-header">
+        <h2>📸 Enregistrer un NOUVEAU visage</h2>
+    </div>
+    <div class="card-body">
+        <p>
+            <strong>À utiliser pour :</strong><br>
+            Ajouter un étudiant qui n'est PAS encore dans la base.
+        </p>
+        <p>
+            <strong>⚙️ Comment ça marche :</strong><br>
+            1. La webcam s'ouvre<br>
+            2. Placez-vous face à la caméra<br>
+            3. Appuyez sur ESPACE pour capturer<br>
+            4. Si visage NON reconnu → formulaire d'inscription<br>
+            5. Si visage déjà existant → message d'erreur
+        </p>
+        <p style="color: #28a745; font-weight: bold;">
+            ✅ Détection automatique des visages déjà enregistrés
+        </p>
+    </div>
+    <div class="card-footer">
+        <button onclick="startRegistration()" class="btn btn-primary" id="registerBtn">
+            🆕 Enregistrer un NOUVEAU visage
+        </button>
+    </div>
+</div>
+
+<!-- CARTE 2 : Reconnaissance et marquage de présence -->
+<div class="card">
+    <div class="card-header">
+        <h2>✅ Reconnaissance & Présence</h2>
+    </div>
+    <div class="card-body">
+        <p>
+            <strong>À utiliser pour :</strong><br>
+            Scanner les visages et marquer automatiquement la présence.
+        </p>
+        <p>
+            <strong>⚙️ Comment ça marche :</strong><br>
+            1. La webcam analyse les visages en temps réel<br>
+            2. Si visage reconnu → NOM affiché + présence enregistrée<br>
+            3. Si visage NON reconnu → "⚠️ NON ENREGISTRE" en rouge<br>
+            4. Appuyez sur Q pour arrêter
+        </p>
+        <p style="color: #ffc107; font-weight: bold;">
+            ⚠️ Les visages non enregistrés sont signalés en ROUGE
+        </p>
+    </div>
+    <div class="card-footer">
+        <button onclick="startRecognition()" class="btn btn-warning" id="recogBtn">
+            🎯 Lancer la reconnaissance
+        </button>
+    </div>
+</div>
+            
+            <!-- CARTE 3 : Gestion des étudiants -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>👨‍🎓 Gestion des étudiants</h2>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Ajouter, modifier ou supprimer</strong><br>
+                        Gérez la liste des étudiants inscrits dans le système.
+                    </p>
+                    <p>
+                        ⚠️ Attention : La suppression d'un étudiant efface également son historique de présence.
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <button onclick="window.location.href='/students'" class="btn btn-secondary">
+                        Gérer les étudiants
+                    </button>
+                </div>
+            </div>
+            
+            <!-- CARTE 4 : Rapports et statistiques -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Rapports & Statistiques</h2>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Générer des rapports PDF</strong><br>
+                        Exportez les présences au format PDF.
+                    </p>
+                    <p>
+                        <strong>Périodes disponibles :</strong><br>
+                        - Rapport journalier<br>
+                        - Rapport mensuel<br>
+                        - Période personnalisée
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <button onclick="generateReport()" class="btn btn-info">
+                        Générer le rapport PDF
+                    </button>
+                </div>
+            </div>
+            
+            <!-- CARTE 5 : Arrêt d'urgence -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>🛑 Arrêt d'urgence</h2>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>⚠️ Utiliser en cas de problème</strong><br>
+                        Force l'arrêt de toutes les tâches de reconnaissance en cours.
+                    </p>
+                    <p>
+                        💡 Alternative : Appuyez sur la touche Q dans la fenêtre OpenCV.
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <button onclick="stopAllTasks()" class="btn btn-danger">
+                        🛑 Arrêter toutes les tâches
+                    </button>
+                </div>
+            </div>
+            
+            <!-- CARTE 6 : Liste des absents -->
+            <div class="card">
+                <div class="card-header">
+                    <h2> Absents du jour</h2>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>👤 Voir les étudiants absents</strong><br>
+                        Affiche la liste des étudiants qui n'ont pas encore marqué leur présence aujourd'hui.
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <button onclick="viewAbsents()" class="btn btn-secondary">
+                        👀 Voir les absents
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Zone de statut -->
+        <div class="status-area" id="statusArea" style="display: none;">
+            <div class="status-title">
+                <span>📡</span> État des opérations
+            </div>
+            <div class="status-message" id="statusMessage">
+                Aucune opération en cours...
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Variables pour suivre l'état des opérations
+        let recognitionActive = false;
+        let registrationActive = false;
+        let statusCheckInterval = null;
+        
+        /**
+         * Affiche une notification à l'utilisateur
+         * @param {string} message - Message à afficher
+         * @param {string} type - Type de notification (success, error, info)
+         */
+        function showNotification(message, type = 'info') {
+            // Création de l'élément de notification
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = message;
+            
+            // Ajout à la page
+            document.body.appendChild(notification);
+            
+            // Suppression après 4 secondes
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+        
+        /**
+         * Met à jour le message de statut
+         * @param {string} message - Message à afficher
+         */
+        function updateStatus(message) {
+            const statusArea = document.getElementById('statusArea');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            if (message) {
+                statusArea.style.display = 'block';
+                statusMessage.innerHTML = message;
+            } else {
+                statusArea.style.display = 'none';
+            }
+        }
+        
+        /**
+         * Vérifie l'état des threads en cours
+         */
+        function checkThreadStatus() {
+            fetch('/recognize/status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.active_threads && Object.keys(data.active_threads).length > 0) {
+                        let statusText = '';
+                        for (const [key, thread] of Object.entries(data.active_threads)) {
+                            if (thread.alive) {
+                                if (key === 'recognition') {
+                                    recognitionActive = true;
+                                    statusText += `Reconnaissance ACTIVE - ${thread.name}<br>`;
+                                    document.getElementById('recogBtn').disabled = true;
+                                    document.getElementById('recogBtn').style.opacity = '0.6';
+                                } else if (key === 'register') {
+                                    registrationActive = true;
+                                    statusText += `📸 Enregistrement ACTIF - ${thread.name}<br>`;
+                                    document.getElementById('registerBtn').disabled = true;
+                                    document.getElementById('registerBtn').style.opacity = '0.6';
+                                }
+                            }
+                        }
+                        if (statusText) {
+                            updateStatus(statusText);
+                        } else {
+                            updateStatus('');
+                            recognitionActive = false;
+                            registrationActive = false;
+                            document.getElementById('recogBtn').disabled = false;
+                            document.getElementById('recogBtn').style.opacity = '1';
+                            document.getElementById('registerBtn').disabled = false;
+                            document.getElementById('registerBtn').style.opacity = '1';
+                        }
+                    } else {
+                        updateStatus('');
+                        recognitionActive = false;
+                        registrationActive = false;
+                        document.getElementById('recogBtn').disabled = false;
+                        document.getElementById('recogBtn').style.opacity = '1';
+                        document.getElementById('registerBtn').disabled = false;
+                        document.getElementById('registerBtn').style.opacity = '1';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la vérification du statut:', error);
+                });
+        }
+        
+        /**
+         * Démarre l'enregistrement d'un nouveau visage
+         */
+        function startRegistration() {
+            if (registrationActive) {
+                showNotification('❌ Un enregistrement est déjà en cours !', 'error');
+                return;
+            }
+            
+            showNotification('📸 Démarrage de l\'enregistrement... La webcam va s\'ouvrir', 'info');
+            
+            fetch('/recognize/register')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        showNotification('❌ ' + data.error, 'error');
+                    } else {
+                        showNotification('✅ ' + data.message, 'success');
+                        showNotification('💡 ' + data.instruction, 'info');
+                        
+                        // Démarrer la vérification périodique du statut
+                        if (statusCheckInterval) clearInterval(statusCheckInterval);
+                        statusCheckInterval = setInterval(checkThreadStatus, 2000);
+                        setTimeout(() => {
+                            checkThreadStatus();
+                        }, 500);
+                    }
+                })
+                .catch(error => {
+                    showNotification('❌ Erreur: ' + error, 'error');
+                });
+        }
+        
+        /**
+         * Démarre la reconnaissance et le marquage de présence
+         */
+        function startRecognition() {
+            if (recognitionActive) {
+                showNotification('❌ Une reconnaissance est déjà en cours !', 'error');
+                return;
+            }
+            
+            showNotification('🎯 Démarrage de la reconnaissance... La webcam va s\'ouvrir', 'info');
+            showNotification('💡 Appuyez sur Q pour arrêter', 'info');
+            
+            fetch('/recognize')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        showNotification('❌ ' + data.error, 'error');
+                    } else {
+                        showNotification('✅ ' + data.message, 'success');
+                        
+                        // Démarrer la vérification périodique du statut
+                        if (statusCheckInterval) clearInterval(statusCheckInterval);
+                        statusCheckInterval = setInterval(checkThreadStatus, 2000);
+                        setTimeout(() => {
+                            checkThreadStatus();
+                        }, 500);
+                    }
+                })
+                .catch(error => {
+                    showNotification('❌ Erreur: ' + error, 'error');
+                });
+        }
+        
+        /**
+         * Arrête toutes les tâches en cours
+         */
+        function stopAllTasks() {
+            showNotification('🛑 Tentative d\'arrêt des tâches...', 'info');
+            
+            fetch('/recognize/stop', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    showNotification('ℹ️ ' + data.message, 'info');
+                    if (data.instruction) {
+                        showNotification('💡 ' + data.instruction, 'info');
+                    }
+                    
+                    // Attendre un peu puis vérifier le statut
+                    setTimeout(() => {
+                        checkThreadStatus();
+                    }, 1000);
+                })
+                .catch(error => {
+                    showNotification('❌ Erreur: ' + error, 'error');
+                });
+        }
+        
+        /**
+         * Génère le rapport PDF
+         */
+        function generateReport() {
+            showNotification('📄 Génération du rapport PDF en cours...', 'info');
+            
+            window.location.href = '/report';
+            
+            // Notification après un court délai (le téléchargement va démarrer)
+            setTimeout(() => {
+                showNotification('📥 Le téléchargement du rapport va commencer', 'success');
+            }, 1000);
+        }
+        
+        /**
+         * Affiche la liste des absents du jour
+         */
+        function viewAbsents() {
+            showNotification('📋 Récupération de la liste des absents...', 'info');
+            
+            fetch('/absents')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        showNotification('✅ Aucun absent aujourd\'hui ! Tous les étudiants sont présents.', 'success');
+                    } else {
+                        let message = `📋 ${data.length} étudiant(s) absent(s) aujourd'hui :\n`;
+                        data.forEach(student => {
+                            message += `- ${student.nom} ${student.prenom}\n`;
+                        });
+                        showNotification(message, 'info');
+                        
+                        // Affichage dans la console pour plus de détails
+                        console.log('Absents du jour:', data);
+                    }
+                })
+                .catch(error => {
+                    showNotification('❌ Erreur: ' + error, 'error');
+                });
+        }
+        
+        // Vérification périodique du statut des threads toutes les 5 secondes
+        setInterval(checkThreadStatus, 5000);
+        
+        // Vérification initiale
+        setTimeout(() => {
+            checkThreadStatus();
+        }, 1000);
+        
+        // Message de bienvenue
+        console.log('🎉 Dashboard RecoJY chargé avec succès !');
+        console.log('📌 Utilisez les boutons pour gérer la reconnaissance faciale');
+    </script>
+</body>
+</html>
