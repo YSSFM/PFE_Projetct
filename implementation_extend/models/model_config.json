@@ -1,0 +1,42 @@
+{
+    "num_classes": 14,
+    "embedding_dim": 128,
+    "threshold": 0.9777936413884163,
+    "class_thresholds": {
+        "0": 0.9475187063217163,
+        "1": 0.9927131533622742,
+        "2": 0.9822975397109985,
+        "3": 0.9924500584602356,
+        "4": 0.9900175333023071,
+        "5": 0.9922049045562744,
+        "6": 0.961398720741272,
+        "7": 0.9700652956962585,
+        "8": 0.9928582310676575,
+        "9": 0.9479161500930786,
+        "10": 0.9662715792655945,
+        "11": 0.9369709491729736,
+        "12": 0.9860406517982483,
+        "13": 0.9743646383285522
+    },
+    "classes": [
+        "Abdou Nasser",
+        "Abdourahaman Mahamat",
+        "Andhraou Yssf",
+        "Bedja Abdillah",
+        "Diallo Aissatou",
+        "Espoir Fundi",
+        "Fidaly Hamdani",
+        "Housnat Said",
+        "Jean Bogou",
+        "Rassoul Moussa_1",
+        "Toiwilou Miftahou",
+        "Youssouf Moussa",
+        "Zalhata Anlaoui",
+        "Zidane Zizou"
+    ],
+    "training_date": "2026-05-19 13:58:35.413868",
+    "img_size": [
+        160,
+        160
+    ]
+}
