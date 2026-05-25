@@ -1,22 +1,15 @@
-# -------------------------------------------------------------------
-# IMPORT DES BIBLIOTHÈQUES NÉCESSAIRES
-# -------------------------------------------------------------------
-
 from flask import Blueprint, jsonify
 from services.recognition_service import recognize_faces
-from services.face_registration_service import register_faces  # Changé ici
+from services.face_registration_service import register_faces
 import threading
 
-# Création blueprint
 recognition_bp = Blueprint("recognition", __name__)
 
-# Dictionnaire pour stocker les threads actifs
 active_threads = {}
 thread_lock = threading.Lock()
 
 
 def cleanup_finished_threads():
-    """Nettoie les threads terminés"""
     with thread_lock:
         to_remove = []
         for key, thread in active_threads.items():
@@ -69,7 +62,7 @@ def register():
     return jsonify({
         "message": "Enregistrement démarré",
         "status": "running",
-        "instruction": "Placez-vous face à la caméra pour capturer votre visage"
+        "instruction": "Placez-vous face à la caméra et appuyez sur ESPACE"
     })
 
 
