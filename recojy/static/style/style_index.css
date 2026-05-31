@@ -1,0 +1,119 @@
+body {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  font-family: 'Raleway', sans-serif;
+  background: linear-gradient(to bottom right, #e0e1e3, #a1a6a8);
+  background-image: url('dep.png');
+}
+
+.header {
+  background-image: url('bg.jpeg');
+  background-color: #ffffffdd;
+  backdrop-filter: blur(6px);
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.logo {
+  width: 215px;
+  position: absolute;
+  top: 2px;
+  left: 40px;
+}
+
+.help-icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 24px;
+  background-color: #0277bd;
+  color: white;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  text-align: center;
+  line-height: 36px;
+  cursor: pointer;
+}
+
+.main-menu {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  padding: 60px 20px;
+  top: 90px;
+}
+
+.menu-card {
+  background-color: #ffffffcc;
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 30px;
+  width: 250px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.menu-card:hover {
+  transform: scale(1.05);
+  background-image: url('bg.jpeg');
+}
+
+.menu-card a {
+  text-decoration: none;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #0277bd;
+}
+
+.alert-box {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  background-image: url('bg.jpeg');
+  background-color: #ffecb3;
+  padding: 20px 0;
+  border-top: 2px solid #ffc107;
+  text-align: left;
+  font-weight: bold;
+  font-size: 1em;
+  top: 250px;
+}
+
+.scroll-text {
+  display: inline-block;
+  padding-left: 100%;
+  animation: slideLeft 20s linear infinite;
+  animation-play-state: running;
+}
+
+.alert-box:hover .scroll-text {
+  animation-play-state: paused;
+  transform: scale(1.55); 
+}
+
+@keyframes slideLeft {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.box {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  background-color: #1d4e93;
+  padding: 40px 0;
+  border-top: 4px solid #000000;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1em;
+  top: 250px;
+}
+
+

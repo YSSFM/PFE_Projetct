@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>RAPPORT DE PRÉSENCE</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_impression.css') }}">
+</head>
+<body>
+
+    <header class="header">
+        <a href='https://www.est.umi.ac.ma/index.php' ><img src="{{ url_for('static', filename='logo_estm.png') }}" alt="Logo ESTM" class="logo"></a>
+        <h2 style="text-align:center;">RAPPORT DE PRÉSENCE</h2>
+        <div class="info_rapport">
+            <p style="margin-top:30px;">Rapport généré le : <script>document.write(new Date().toLocaleDateString())</script></p>
+        </div>
+    </header>
+
+    <table>
+        <thead>
+            <tr>
+                <th>N°</th><th>Nom</th><th>Prénoms</th><th>Sexe</th><th>Option</th>
+                <th>Département</th><th>Chef Département</th><th>Année Académique</th><th>Semestre</th><th>Mail</th>
+                <th>Tel</th><th>Date</th><th>Heure</th><th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in presences %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ p[1] }}</td>
+                <td>{{ p[2] }}</td>
+                <td>{{ p[3] }}</td>
+                <td>{{ p[4] }}</td>
+                <td>{{ p[5] }}</td>
+                <td>{{ p[6] }}</td>
+                <td>{{ p[7] }}</td>
+                <td>{{ p[8] }}</td>
+                <td>{{ p[9] }}</td>
+                <td>{{ p[10] }}</td>
+                <td>{{ p[11] }}</td>
+                <td>{{ p[12] }}</td>
+                <td>{{ p[13] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="no-print" style="margin-top:20px;">
+        <button onclick="window.print()">🖨️ Imprimer</button>
+        <a href="{{ url_for('generer_rapport') }}">⬅ Retour</a>
+    </div>
+</body>
+</html>

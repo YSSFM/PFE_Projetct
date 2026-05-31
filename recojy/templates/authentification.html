@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Authentification</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Raleway', sans-serif;
+      background: linear-gradient(to bottom right, #e0e1e3, #a1a6a8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .auth-container {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 40px;
+      width: 350px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #101111;
+      margin-bottom: 10px;
+    }
+
+    h4 {
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #54c0ca;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.6);
+      font-size: 1em;
+    }
+
+    input[type="submit"] {
+      background-color: #000000;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #0277bd;
+    }
+
+    .news-ticker {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9em;
+      color: #33596c;
+      animation: slideUp 1s ease-in-out;
+    }
+
+    .news-ticker span {
+      display: inline-block;
+      padding: 0 10px;
+      animation: scrollNews 15s linear infinite;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scrollNews {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="create-box" style="position:fixed; top:0; left:-100%; width:100%; height:100%; background:rgba(255,255,255,0.2); backdrop-filter:blur(12px); transition:left 0.6s ease-in-out; z-index:1000; display:flex; justify-content:center; align-items:center;">
+  <div style="background:rgb(196, 196, 196); padding:30px; border-radius:20px; width:300px;">
+    <h3>Créer un compte</h3>
+    <form action="/create_account" method="post">
+      <input type="text" name="new_username" placeholder="Nom d'utilisateur" required><br>
+      <input type="password" name="new_password" placeholder="Mot de passe" required><br>
+      <input type="submit" value="Créer">
+    </form>
+    <div style="display: flex; justify-content: right; margin-top: -40px;">
+      <button onclick="closeCreate()" style="background-color:#d70808; color:white; border:none; padding:12px 20px; border-radius:8px; cursor:pointer;">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<div id="reset-box" style="position:fixed; top:0; left:-100%; width:100%; height:100%; background:rgba(255,255,255,0.2); backdrop-filter:blur(12px); transition:left 0.6s ease-in-out; z-index:1000; display:flex; justify-content:center; align-items:center;">
+  <div style="background:rgb(196, 196, 196); padding:30px; border-radius:20px; width:300px;">
+    <h3>Récupérer le mot de passe</h3>
+    <form action="/reset_password" method="post">
+      <input type="text" name="reset_username" placeholder="Nom d'utilisateur" required><br>
+      <input type="submit" value="Réinitialiser">
+    </form>
+    <div style="display: flex; justify-content: right; margin-top: -40px;">
+      <button onclick="closeReset()" style="background-color:#d70808; color:white; border:none; padding:12px 20px; border-radius:8px; cursor:pointer;">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openCreate() {
+    document.getElementById('create-box').style.left = '0';
+  }
+  function closeCreate() {
+    document.getElementById('create-box').style.left = '-100%';
+  }
+  function openReset() {
+    document.getElementById('reset-box').style.left = '0';
+  }
+  function closeReset() {
+    document.getElementById('reset-box').style.left = '-100%';
+  }
+</script>
+
+  <div class="auth-container">
+    <h1> Bienvenue </h1>
+    <h4>Connexion</h4>
+    <form action="/login" method="post">
+      <input type="text" name="username" placeholder="Nom d'utilisateur" required><br>
+      <input type="password" name="password" placeholder="Mot de passe" required><br>
+    <div style="display: flex; justify-content: space-around; margin-top: 15px;">
+      <input type="submit" value="Se connecter">
+      <button type="button" onclick="openCreate()" style="background-color:#0277bd; color:white; border:none; padding:12px 20px; border-radius:8px; cursor:pointer;">Créer un compte</button>
+    </div>
+      {% if error %}
+    <p style="color:red; font-weight:bold;">❌ Identifiants incorrects</p>
+      {% endif %}
+    </form>
+
+    {% if show_reset %}
+    <p style="margin-top:10px;"><a href="#" onclick="openReset()">🔐 Mot de passe oublié</a></p>
+    {% endif %}
+  </div>
+
+  <div class="news-ticker">
+    <span>JReco 2025 ⓒ Tous droits réservés</span>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  {% if recovered_password %}
+  Swal.fire({
+    title: '🔐 Mot de passe récupéré',
+    html: 'Le mot de passe de <strong>{{ recovered_user }}</strong> est : <code>{{ recovered_password }}</code>',
+    icon: 'info',
+    confirmButtonText: 'OK',
+    backdrop: true,
+    timer: 8000,
+    timerProgressBar: true
+  });
+  {% endif %}
+
+  {% if show_create %}
+  Swal.fire({
+    title: 'Utilisateur introuvable',
+    text: "Ce nom d'utilisateur n'existe pas. Voulez-vous créer un nouveau compte ?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Créer un compte',
+    cancelButtonText: 'Annuler'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      openCreate();
+    }
+  });
+  {% endif %}
+</script>
+
+</body>
+</html>

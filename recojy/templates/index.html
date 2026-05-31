@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Accueil - Reconnaissance Faciale</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style_index.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <header class="header">
+    <a href='https://www.est.umi.ac.ma/index.php' ><img src="{{ url_for('static', filename='logo_estm.png') }}" alt="Logo ESTM" class="logo"></a>
+    <h1>École Supérieure de Technologie - Meknès</h1>
+    <div class="help-icon" onclick="showGuide()" title="Infos">?</div>
+  </header>
+
+  <main class="main-menu">
+    <div class="menu-card">
+      <a href="{{ url_for('detail_etudiant') }}" title="Enregistrer un(e) étudiant(e)">👤 Détail Étudiant(e)</a>
+    </div>
+    <div class="menu-card">
+      <a href="{{ url_for('entrainement') }}" title="Entraînement">🧠 Entraînement</a>
+    </div>
+    <div class="menu-card">
+      <a href="{{ url_for('detection_faciale') }}" title="Scanner un(e) étudiant(e)">📸 Détection Faciale</a>
+    </div>
+    <div class="menu-card">
+      <a href="{{ url_for('presence') }}" title="Liste Présence">📋 Présence</a>
+    </div>
+  </main>
+
+  <section class="alert-box">
+    <span class="scroll-text">⚠️ N'oubliez pas de lancer l'entraînement après avoir ajouté un(e) étudiant(e).</span>
+  </section>
+  <section class="box">
+    © École Supérieure de Technologie Meknès
+  </section>
+
+  <script>
+    function showGuide() {
+      Swal.fire({
+        title: '🧭 Guide d’utilisation',
+        html: `
+          <div style="text-align:left; font-size:16px;">
+            <p>➤ <strong>Étape 1 :</strong> Enregistrer l'étudiant(e) dans <em>Détail Étudiant</em></p>
+            <p>➤ <strong>Étape 2 :</strong> Lancer l'entraînement dans <em>Entraînement</em></p>
+            <p>➤ <strong>Étape 3 :</strong> Marquer la présence via <em>Détection Faciale</em></p>
+            <p>➤ <strong>Étape 4 :</strong> Consulter les infos dans <em>Présence</em></p>
+          </div>
+        `,
+        confirmButtonText: 'Compris 👍',
+        backdrop: true,
+        width: 500,
+        background: '#f0f4f8',
+        color: '#2c3e50'
+      });
+    }
+  </script>
+</body>
+</html>

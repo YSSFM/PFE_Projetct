@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style_detail.css') }}">
+        <title>Détails Étudiant</title>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </head>
+
+    <body>
+{% if success %}
+        <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Étudiant enregistré',
+            text: 'Les informations ont été enregistrées avec succès !',
+            confirmButtonText: 'OK'
+        });
+        </script>
+        {% endif %}
+
+        {% if error_cne_double %}
+        <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'CNE déjà existant',
+            text: "L'étudiant avec le CNE '{{ cne_fourni }}' existe déjà dans la base de données.",
+            confirmButtonText: 'OK'
+        });
+        </script>
+        {% endif %}
+        <h2>Enregistrer un(e) Étudiant(e)</h2><br>
+        <div class="container">
+            <form action="/ajouter" method="post">
+                <div class="etudiant">
+                    <input type="text" name="CNEMASSAR" placeholder="CNE/MASSAR" required><br>    
+                    <input type="text" name="nom" placeholder="Nom" required><br>
+                    <input type="text" name="prenom" placeholder="Prénoms" required><br>
+                    
+                    <label>Sexe : </label>
+                    M <input type="radio" name="sex" value="M" required>
+                    F <input type="radio" name="sex" value="F" required>
+                    <br><br>
+                    
+                    <input type="text" name="telephone" placeholder="Téléphone" required><br>
+                    <input type="text" name="mail" placeholder="E-mail" required><br>
+                </div>
+                
+                <div class="camera">
+                    <video id="video" width="320" height="240" autoplay></video>
+                    <canvas id="canvas" style="display:none;"></canvas>
+                </div>
+                <br>
+                
+                <div class="boutton_camera">
+                    <button type="button" onclick="capturePhoto()">📸 Prendre Photo</button>
+                </div>
+                <input type="hidden" name="photo_data" id="photo_data">
+                <br>
+
+                <div class="admin">
+                    Département
+                    <select name="departement">
+                        <option value="Informatique">Informatique</option>
+                        <option value="Economique">Économique</option>
+                    </select> <br>
+                    
+                    <input type="text" name="chef_departement" placeholder="Chef département" required><br>
+                    <input type="text" name="options" placeholder="Option" required><br>
+                    
+                    <input type="text" name="annee_academique" placeholder="Année Académique" required><br>
+                    <input type="number" name="semestre" placeholder="Semestre" min="1" required><br>
+                </div>
+                
+                <div class="boutton">
+                    <input type="submit" name="Enregistrer" value="Enregistrer">
+                    <input type="reset" name="effacer" value="Effacer">
+                </div>
+                
+                <div>
+                    <table border="2px">
+                        <thead>
+                            <tr>
+                                <th>CNE/<br>MASSAR</th>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Sexe</th>
+                                <th>Option</th>
+                                <th>Département</th>
+                                <th>Chef département</th>
+                                <th>Année</th>
+                                <th>Semestre</th>
+                                <th>Mail</th>
+                                <th>Tel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="a">
+                                <td>{{ CNEMASSAR if CNEMASSAR else '' }}</td>
+                                <td>{{ nom if nom else '' }}</td>
+                                <td>{{ prenom if prenom else '' }}</td>
+                                <td>{{ sex if sex else '' }}</td>
+                                <td>{{ options if options else '' }}</td>
+                                <td>{{ departement if departement else '' }}</td>
+                                <td>{{ chef_departement if chef_departement else '' }}</td>
+                                <td>{{ annee_academique if annee_academique else '' }}</td>
+                                <td>{{ semestre if semestre else '' }}</td>
+                                <td>{{ mail if mail else '' }}</td>
+                                <td>{{ telephone if telephone else '' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+
+       <script>
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const photoInput = document.getElementById('photo_data');
+
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+      video.srcObject = stream;
+    })
+    .catch(err => {
+      console.error("Erreur d'accès à la webcam : ", err);
+    });
+
+  function capturePhoto() {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    const imageData = canvas.toDataURL('image/jpeg');
+    photoInput.value = imageData;
+    alert("📸 Photo capturée !");
+  }
+</script>
+
+<br><br>
+    <div class="boutton_accueil"><a href="{{ url_for('accueil') }}" title="Accueil">⬅</a></div>
+    </body>
+</html>

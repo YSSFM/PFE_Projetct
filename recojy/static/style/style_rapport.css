@@ -1,0 +1,151 @@
+body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Raleway', sans-serif;
+      background-image: url("bg.jpeg");
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      justify-content:center;
+    }
+    .container {
+      position:relative;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 40px;
+      width: 1300px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 1s ease-in-out;
+      margin-top: 100px;
+      margin-bottom: 50px;
+      right: 70px;
+      bottom:0px;
+    }
+    h2 {
+      position:relative;
+      font-size: 2em;
+      color: #101111;
+      left: 50px;
+      top: 5px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.6);
+      font-size: 1em;
+    }
+
+    .etudiant{
+        position: absolute;
+    }
+
+    .admin{
+        position: absolute;
+        right: 20px;
+    }
+
+    .camera {
+    position: absolute;
+    top: -170px;
+    right: 150px;
+    }
+    .camera img{
+        transform: scale(0.05); /* réduit à 5% de la taille originale */
+    }
+
+    .boutton{
+        position: absolute;
+        top: 500px;
+        right:50px;
+        align-items: center;
+    }
+    .boutton input {
+    color: rgba(237, 237, 237, 0.9);
+    background-color: hsla(0, 1%, 59%, 0.744);
+    border-radius: 50px;
+    font-weight: 600;
+    padding: 1rem 1rem;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.boutton input[type="submit"]:hover {
+    background-color: hsla(115, 100%, 50%, 0.793);
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+}
+
+table{
+      width: 100%;
+      padding: 10px;
+      margin: 10px ;
+      border: #3de7e7;
+      border-style:ridge;
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.6);
+      font-size: 1em 2em;
+      position:relative;
+    }
+
+      .scroll-zone {
+        max-height: 450px;
+        overflow-x: auto;
+        position: relative;
+        top: -10px;
+      }
+    
+table th:nth-child(1)  { background-color: rgba(0, 123, 255, 1);    color: white; }
+table th:nth-child(2)  { background-color: rgba(0, 123, 255, 0.93); color: white; }
+table th:nth-child(3)  { background-color: rgba(0, 123, 255, 0.86); color: white; }
+table th:nth-child(4)  { background-color: rgba(0, 123, 255, 0.79); color: white; }
+table th:nth-child(5)  { background-color: rgba(0, 123, 255, 0.72); color: white; }
+table th:nth-child(6)  { background-color: rgba(0, 123, 255, 0.65); color: white; }
+table th:nth-child(7)  { background-color: rgba(0, 123, 255, 0.58); color: white; }
+table th:nth-child(8)  { background-color: rgba(0, 123, 255, 0.51); color: white; }
+table th:nth-child(9)  { background-color: rgba(0, 123, 255, 0.44); color: black; }
+table th:nth-child(10) { background-color: rgba(0, 123, 255, 0.37); color: black; }
+table th:nth-child(11) { background-color: rgba(0, 123, 255, 0.30); color: black; }
+table th:nth-child(12) { background-color: rgba(0, 123, 255, 0.23); color: black; }
+table th:nth-child(13) { background-color: rgba(0, 123, 255, 0.16); color: black; }
+table th:nth-child(14) { background-color: rgba(0, 123, 255, 0.09); color: black; }
+
+
+     @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scrollNews {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .boutton_accueil{
+    position:absolute;
+    top:10px;
+    right: 80px;
+    padding: 1rem 1rem;
+  }
+  .boutton_accueil a{
+    text-decoration:none;
+    color: hsla(0, 0%, 100%, 0.992);
+    background-color: hsl(0, 0%, 0%);
+    transform: scale(3.05);
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+}
