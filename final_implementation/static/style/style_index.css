@@ -1,0 +1,120 @@
+/* style_index.css */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Raleway', sans-serif;
+  background: linear-gradient(to bottom right, #e0e1e3, #a1a6a8);
+  background-image: url('../static/dep.png');
+  /* Vérifiez bien le chemin de vos assets */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background-image: url('../static/bg.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  width: 215px;
+  position: absolute;
+  top: 50%;
+  left: 40px;
+  transform: translateY(-50%);
+}
+
+.help-icon {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  font-size: 24px;
+  background-color: #0277bd;
+  color: white;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  text-align: center;
+  line-height: 36px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.help-icon:hover {
+  background-color: #01579b;
+}
+
+.main-menu {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  padding: 60px 20px;
+  flex: 1;
+}
+
+.menu-card {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 40px 30px;
+  width: 250px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-image 0.3s;
+}
+
+.menu-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  background-image: url('../static/bg.jpeg');
+  background-size: cover;
+}
+
+.menu-card a {
+  text-decoration: none;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #0277bd;
+  display: block;
+}
+
+.menu-card:hover a {
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.alert-box {
+  overflow: hidden;
+  white-space: nowrap;
+  background-color: #ffecb3;
+  padding: 15px 0;
+  border-top: 2px solid #ffc107;
+  text-align: center;
+}
+
+.scroll-text {
+  display: inline-block;
+  font-weight: bold;
+  color: #b78103;
+}
+
+.box {
+  background-color: #101111;
+  color: #ffffff;
+  text-align: center;
+  padding: 15px;
+  font-size: 0.9em;
+}

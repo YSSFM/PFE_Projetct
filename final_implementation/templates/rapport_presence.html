@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>recoJY - Générer rapport</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 1s ease-in-out;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .card {
+            background: #0f111a;
+            border: 1px solid #1e2a3a;
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #1e2a3a;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #ffffff 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .back-link {
+            color: #8ca3ba;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: #080a10;
+            border: 1px solid #1e2a3a;
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+        
+        .back-link:hover {
+            color: #00d4ff;
+            border-color: #00d4ff;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            color: #8ca3ba;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            background: #080a10;
+            border: 1px solid #1e2a3a;
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: #f1f5f9;
+            font-size: 0.9rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #0088aa);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #10b981;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-warning {
+            background: #f59e0b;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .actions-bar {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #080a10;
+            border: 1px solid #1e2a3a;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #00d4ff;
+        }
+        
+        .stat-label {
+            color: #8ca3ba;
+            margin-top: 5px;
+        }
+        
+        .filters-bar {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 180px;
+        }
+        
+        .filter-group label {
+            color: #8ca3ba;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .presence-table {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #1e2a3a;
+        }
+        
+        th {
+            background: #080a10;
+            color: #00d4ff;
+            font-weight: 600;
+        }
+        
+        td {
+            color: #e2e8f0;
+        }
+        
+        .email-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #080a10;
+            border-radius: 16px;
+        }
+        
+        .search-email {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .search-email input {
+            flex: 2;
+            background: #0f111a;
+            border: 1px solid #1e2a3a;
+            border-radius: 10px;
+            padding: 10px;
+            color: white;
+        }
+        
+        .search-email select {
+            flex: 1;
+            background: #0f111a;
+            border: 1px solid #1e2a3a;
+            border-radius: 10px;
+            padding: 10px;
+            color: white;
+        }
+        
+        .email-checkboxes {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+        
+        .email-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #1e2a3a;
+        }
+        
+        .email-checkbox input {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .select-all {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .badge {
+            background: #00d4ff20;
+            color: #00d4ff;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="header">
+            <h1><i class="fas fa-file-alt"></i> Génération de rapport</h1>
+            <a href="{{ url_for('student.accueil') }}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Retour au Dashboard
+            </a>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalStudents">-</div>
+                <div class="stat-label">Total étudiants</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalPresent">-</div>
+                <div class="stat-label">Présents aujourd'hui</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalAbsent">-</div>
+                <div class="stat-label">Absents aujourd'hui</div>
+            </div>
+        </div>
+
+        <!-- Filtres par période, département et filière -->
+        <div class="filters-bar">
+            <div class="filter-group">
+                <label><i class="fas fa-calendar-alt"></i> Date début</label>
+                <input type="date" id="startDate">
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-calendar-alt"></i> Date fin</label>
+                <input type="date" id="endDate">
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-building"></i> Département</label>
+                <select id="deptFilter">
+                    <option value="">Tous les départements</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-code-branch"></i> Filière / Option</label>
+                <select id="filiereFilter">
+                    <option value="">Toutes les filières</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="actions-bar">
+            <button class="btn-primary" onclick="generatePDF()">
+                <i class="fas fa-file-pdf"></i> Générer PDF
+            </button>
+            <button class="btn-secondary" onclick="exportCSV()">
+                <i class="fas fa-file-excel"></i> Exporter CSV
+            </button>
+        </div>
+    </div>
+
+    <!-- Liste des présences -->
+    <div class="card">
+        <div class="header">
+            <h2><i class="fas fa-list"></i> Présences enregistrées</h2>
+            <button class="btn-primary" onclick="refreshPresences()">
+                <i class="fas fa-sync-alt"></i> Rafraîchir
+            </button>
+        </div>
+        <div class="presence-table">
+            <table id="presenceTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Heure</th>
+                        <th>CNE Massar</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Département</th>
+                        <th>Filière</th>
+                    </tr>
+                </thead>
+                <tbody id="presenceTableBody">
+                    <tr><td colspan="7" style="text-align:center">Chargement...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Envoi d'email avec recherche -->
+    <div class="card">
+        <div class="header">
+            <h2><i class="fas fa-envelope"></i> Envoyer un e-mail aux étudiants</h2>
+        </div>
+        
+        <div class="form-group">
+            <label><i class="fas fa-tag"></i> Objet du message</label>
+            <input type="text" id="emailSubject" placeholder="Ex: Rapport de présence du jour" value="Rapport de présence - EST Meknès">
+        </div>
+        
+        <div class="form-group">
+            <label><i class="fas fa-comment"></i> Message</label>
+            <textarea id="emailMessage" rows="4" style="width:100%; background:#080a10; border:1px solid #1e2a3a; border-radius:12px; padding:14px; color:white;">Bonjour,
+
+Veuillez trouver ci-joint votre rapport de présence.
+
+Cordialement,
+Administration EST Meknès</textarea>
+        </div>
+        
+        <div class="email-section">
+            <div class="search-email">
+                <input type="text" id="studentSearchEmail" placeholder="Rechercher par nom, prénom, CNE ou email..." onkeyup="filterEmailStudents()">
+                <select id="emailDeptFilter" onchange="filterEmailStudents()">
+                    <option value="">Tous les départements</option>
+                </select>
+                <select id="emailFiliereFilter" onchange="filterEmailStudents()">
+                    <option value="">Toutes les filières</option>
+                </select>
+            </div>
+            
+            <div class="select-all">
+                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()">
+                <label style="color:#00d4ff">Sélectionner tous les étudiants</label>
+                <span class="badge" id="selectedCount">0 sélectionné(s)</span>
+            </div>
+            
+            <div id="studentsEmailList" class="email-checkboxes">
+                <!-- La liste des étudiants sera chargée ici -->
+            </div>
+        </div>
+        
+        <div class="actions-bar">
+            <button class="btn-primary" onclick="sendEmails()">
+                <i class="fas fa-paper-plane"></i> Envoyer aux sélectionnés
+            </button>
+            <button class="btn-warning" onclick="sendEmailToAll()">
+                <i class="fas fa-envelope-open-text"></i> Envoyer à tous
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Images de fond dynamiques
+    const backgrounds = [
+        "url('/static/images/bg_abstract.jpg')",
+        "url('/static/images/bg_minimal.jpg')",
+        "url('/static/images/background.jpg')"
+    ];
+    
+    let currentBg = 0;
+    
+    function changeBackground() {
+        currentBg = (currentBg + 1) % backgrounds.length;
+        document.body.style.backgroundImage = backgrounds[currentBg];
+    }
+    
+    setInterval(changeBackground, 5000);
+    document.body.style.backgroundImage = backgrounds[0];
+
+    // Initialisation des dates
+    const today = new Date().toISOString().split('T')[0];
+    const firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+    document.getElementById('startDate').value = firstDay;
+    document.getElementById('endDate').value = today;
+
+    let allStudents = [];
+    let filteredEmailStudents = [];
+    let allDepartements = [];
+    let allFilieres = [];
+
+    // Charger les départements
+    async function loadDepartements() {
+        const res = await fetch('/api/departements');
+        allDepartements = await res.json();
+        
+        const deptSelect = document.getElementById('deptFilter');
+        deptSelect.innerHTML = '<option value="">Tous les départements</option>' + 
+            allDepartements.map(d => `<option value="${d.NOM_DEPARTEMENT}">${d.NOM_DEPARTEMENT}</option>`).join('');
+        
+        const emailDeptSelect = document.getElementById('emailDeptFilter');
+        emailDeptSelect.innerHTML = '<option value="">Tous les départements</option>' + 
+            allDepartements.map(d => `<option value="${d.NOM_DEPARTEMENT}">${d.NOM_DEPARTEMENT}</option>`).join('');
+    }
+
+    // Charger les filières uniques depuis les étudiants
+    async function loadFilieres() {
+        const res = await fetch('/api/etudiants/liste');
+        const students = await res.json();
+        const filieresSet = new Set();
+        students.forEach(s => {
+            if (s.OPTIONS && s.OPTIONS.trim() !== '') {
+                filieresSet.add(s.OPTIONS);
+            }
+        });
+        allFilieres = Array.from(filieresSet).sort();
+        
+        const filiereSelect = document.getElementById('filiereFilter');
+        filiereSelect.innerHTML = '<option value="">Toutes les filières</option>' + 
+            allFilieres.map(f => `<option value="${f}">${f}</option>`).join('');
+        
+        const emailFiliereSelect = document.getElementById('emailFiliereFilter');
+        emailFiliereSelect.innerHTML = '<option value="">Toutes les filières</option>' + 
+            allFilieres.map(f => `<option value="${f}">${f}</option>`).join('');
+    }
+
+    // Charger les statistiques
+    async function loadStats() {
+        const res = await fetch('/api/stats/presences');
+        const stats = await res.json();
+        document.getElementById('totalStudents').innerText = stats.total_students || 0;
+        document.getElementById('totalPresent').innerText = stats.present_today || 0;
+        document.getElementById('totalAbsent').innerText = stats.absent_today || 0;
+    }
+
+    // Charger les présences avec filtres
+    async function loadPresences() {
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        const dept = document.getElementById('deptFilter').value;
+        const filiere = document.getElementById('filiereFilter').value;
+        
+        let url = `/api/presences/periode?start=${start}&end=${end}`;
+        if (dept) url += `&departement=${encodeURIComponent(dept)}`;
+        if (filiere) url += `&filiere=${encodeURIComponent(filiere)}`;
+        
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        const tbody = document.getElementById('presenceTableBody');
+        if (data.length) {
+            tbody.innerHTML = data.map(p => `
+                <tr>
+                    <td>${p.DATE_PRESENCE}</td>
+                    <td>${p.HEURE}</td>
+                    <td>${p.CNE_MASSAR}</td>
+                    <td>${p.NOM}</td>
+                    <td>${p.PRENOM}</td>
+                    <td>${p.DEPARTEMENT || '-'}</td>
+                    <td>${p.OPTIONS || '-'}</td>
+                </tr>
+            `).join('');
+        } else {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Aucune présence enregistrée</td></tr>';
+        }
+    }
+
+    // Charger la liste des étudiants pour les emails
+    async function loadStudentsForEmail() {
+        const res = await fetch('/api/etudiants/liste');
+        allStudents = await res.json();
+        filteredEmailStudents = [...allStudents];
+        displayEmailStudents();
+    }
+
+    function displayEmailStudents() {
+        const container = document.getElementById('studentsEmailList');
+        container.innerHTML = filteredEmailStudents.map(s => `
+            <div class="email-checkbox" data-cne="${s.CNE_MASSAR}">
+                <input type="checkbox" class="student-checkbox" data-email="${s.MAIL || ''}" data-cne="${s.CNE_MASSAR}" data-name="${s.NOM} ${s.PRENOM}">
+                <div style="flex:1">
+                    <strong>${s.NOM} ${s.PRENOM}</strong><br>
+                    <small style="color:#8ca3ba">${s.CNE_MASSAR} | ${s.NOM_DEPARTEMENT || '-'} | ${s.OPTIONS || 'Sans filière'} | ${s.MAIL || 'Pas d\'email'}</small>
+                </div>
+            </div>
+        `).join('');
+        
+        updateSelectedCount();
+    }
+
+    function filterEmailStudents() {
+        const searchTerm = document.getElementById('studentSearchEmail').value.toLowerCase();
+        const deptFilter = document.getElementById('emailDeptFilter').value;
+        const filiereFilter = document.getElementById('emailFiliereFilter').value;
+        
+        filteredEmailStudents = allStudents.filter(s => {
+            const matchSearch = !searchTerm || 
+                (s.CNE_MASSAR && s.CNE_MASSAR.toLowerCase().includes(searchTerm)) ||
+                (s.NOM && s.NOM.toLowerCase().includes(searchTerm)) ||
+                (s.PRENOM && s.PRENOM.toLowerCase().includes(searchTerm)) ||
+                (s.MAIL && s.MAIL.toLowerCase().includes(searchTerm));
+            
+            const matchDept = !deptFilter || s.NOM_DEPARTEMENT === deptFilter;
+            const matchFiliere = !filiereFilter || s.OPTIONS === filiereFilter;
+            
+            return matchSearch && matchDept && matchFiliere;
+        });
+        
+        displayEmailStudents();
+    }
+
+    function updateSelectedCount() {
+        const selected = document.querySelectorAll('.student-checkbox:checked').length;
+        document.getElementById('selectedCount').innerText = `${selected} sélectionné(s)`;
+    }
+
+    function toggleSelectAll() {
+        const selectAll = document.getElementById('selectAllCheckbox').checked;
+        document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = selectAll);
+        updateSelectedCount();
+    }
+
+    // Générer PDF avec filtres
+    async function generatePDF() {
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        const dept = document.getElementById('deptFilter').value;
+        const filiere = document.getElementById('filiereFilter').value;
+        let url = `/api/rapport/pdf?start=${start}&end=${end}`;
+        if (dept) url += `&departement=${encodeURIComponent(dept)}`;
+        if (filiere) url += `&filiere=${encodeURIComponent(filiere)}`;
+        window.open(url, '_blank');
+    }
+
+    // Exporter CSV avec filtres
+    async function exportCSV() {
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        const dept = document.getElementById('deptFilter').value;
+        const filiere = document.getElementById('filiereFilter').value;
+        let url = `/api/rapport/csv?start=${start}&end=${end}`;
+        if (dept) url += `&departement=${encodeURIComponent(dept)}`;
+        if (filiere) url += `&filiere=${encodeURIComponent(filiere)}`;
+        window.open(url, '_blank');
+    }
+
+    function refreshPresences() {
+        loadStats();
+        loadPresences();
+    }
+
+    // Envoyer emails
+    async function sendEmails() {
+        const selectedCheckboxes = document.querySelectorAll('.student-checkbox:checked');
+        if (selectedCheckboxes.length === 0) {
+            Swal.fire('Attention', 'Veuillez sélectionner au moins un étudiant', 'warning');
+            return;
+        }
+        
+        const subject = document.getElementById('emailSubject').value;
+        const message = document.getElementById('emailMessage').value;
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        const dept = document.getElementById('deptFilter').value;
+        const filiere = document.getElementById('filiereFilter').value;
+        
+        const students = [];
+        selectedCheckboxes.forEach(cb => {
+            if (cb.dataset.email && cb.dataset.email !== '') {
+                students.push({
+                    email: cb.dataset.email,
+                    cne: cb.dataset.cne,
+                    name: cb.dataset.name
+                });
+            }
+        });
+        
+        if (students.length === 0) {
+            Swal.fire('Attention', 'Aucun étudiant sélectionné n\'a d\'adresse email', 'warning');
+            return;
+        }
+        
+        Swal.fire({
+            title: 'Envoi en cours...',
+            text: 'Veuillez patienter',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        
+        const res = await fetch('/api/envoyer-emails', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ students, subject, message, start_date: start, end_date: end, departement: dept, filiere: filiere })
+        });
+        
+        const result = await res.json();
+        Swal.fire('Terminé', `${result.sent} email(s) envoyés avec succès`, 'success');
+    }
+
+    async function sendEmailToAll() {
+        document.getElementById('selectAllCheckbox').checked = true;
+        toggleSelectAll();
+        sendEmails();
+    }
+
+    // Écouteurs d'événements
+    document.getElementById('startDate').addEventListener('change', loadPresences);
+    document.getElementById('endDate').addEventListener('change', loadPresences);
+    document.getElementById('deptFilter').addEventListener('change', loadPresences);
+    document.getElementById('filiereFilter').addEventListener('change', loadPresences);
+    document.addEventListener('change', function(e) {
+        if (e.target.classList && e.target.classList.contains('student-checkbox')) {
+            updateSelectedCount();
+        }
+    });
+
+    // Initialisation
+    loadDepartements();
+    loadFilieres();
+    loadStats();
+    loadPresences();
+    loadStudentsForEmail();
+</script>
+</body>
+</html>
