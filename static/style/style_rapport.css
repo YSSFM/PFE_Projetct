@@ -1,0 +1,147 @@
+/* style_rapport.css */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Raleway', sans-serif;
+  background-image: url("../static/bg.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 40px;
+  width: 95%;
+  max-width: 1400px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+}
+
+h2 {
+  font-size: 2em;
+  color: #101111;
+  text-align: center;
+  margin-top: 0;
+}
+
+.scroll-zone {
+  width: 100%;
+  overflow-x: auto;
+  /* Permet le défilement horizontal fluide du grand tableau */
+  margin-top: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  min-width: 1200px;
+  /* Force le tableau à garder sa structure sans écraser les cellules */
+}
+
+table th,
+table td {
+  padding: 10px 8px;
+  border: 1px solid #e0e0e0;
+  text-align: center;
+  font-size: 13px;
+}
+
+/* Harmonisation des dégradés du header de votre tableau */
+table th:nth-child(1) {
+  background-color: rgba(0, 123, 255, 1.0);
+  color: white;
+}
+
+table th:nth-child(2) {
+  background-color: rgba(0, 123, 255, 0.9);
+  color: white;
+}
+
+table th:nth-child(3) {
+  background-color: rgba(0, 123, 255, 0.85);
+  color: white;
+}
+
+table th:nth-child(4) {
+  background-color: rgba(0, 123, 255, 0.78);
+  color: white;
+}
+
+table th:nth-child(5) {
+  background-color: rgba(0, 123, 255, 0.72);
+  color: white;
+}
+
+table th:nth-child(6) {
+  background-color: rgba(0, 123, 255, 0.65);
+  color: white;
+}
+
+table th:nth-child(7) {
+  background-color: rgba(0, 123, 255, 0.58);
+  color: white;
+}
+
+table th:nth-child(8) {
+  background-color: rgba(0, 123, 255, 0.51);
+  color: white;
+}
+
+table th:nth-child(9) {
+  background-color: rgba(0, 123, 255, 0.44);
+  color: black;
+}
+
+table th:nth-child(10) {
+  background-color: rgba(0, 123, 255, 0.37);
+  color: black;
+}
+
+table th:nth-child(11) {
+  background-color: rgba(0, 123, 255, 0.30);
+  color: black;
+}
+
+table th:nth-child(12) {
+  background-color: rgba(0, 123, 255, 0.23);
+  color: black;
+}
+
+table th:nth-child(13) {
+  background-color: rgba(0, 123, 255, 0.16);
+  color: black;
+}
+
+table th:nth-child(14) {
+  background-color: rgba(0, 123, 255, 0.09);
+  color: black;
+}
+
+/* Styles alternés pour les lignes (Zebra striping) */
+table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.boutton_accueil {
+  margin-top: 20px;
+}
+
+.boutton_accueil a {
+  text-decoration: none;
+  font-size: 20px;
+  color: #333;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 8px 16px;
+  border-radius: 20px;
+}

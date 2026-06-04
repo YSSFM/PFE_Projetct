@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Présence & Recherche Avancée</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_presence.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    {% if popup_cne %}
+        <script>
+        Swal.fire({
+            icon: 'warning',
+            title: 'Étudiant(e) introuvable',
+            text: "Aucun dossier ne correspond au CNE '{{ popup_cne }}'. Voulez-vous créer sa fiche ?",
+            showCancelButton: true,
+            confirmButtonText: 'Oui, inscrire',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "{{ url_for('student.detail_etudiant') }}";
+            }
+        });
+        </script>
+    {% endif %}
+
+    <h1>Espace Gestion des Présences & Suivi</h1><br>
+    <div class=\"container\">
+        
+        <form method="POST" action="#">
+            <div class="etudiant">
+                <label>CNE / MASSAR Étudiant :</label><br>
+                <input type="text" name="cne" value="{{ infos['cne'] if infos else '' }}" placeholder="Scannez ou saisissez manuellement..." required><br>
+            </div>
+            
+            <div class="info_auto">
+                <div class="champ_g">
+                    Nom Complet : <input type="text" value="{{ infos['nom'] }} {{ infos['prenom'] }}" readonly> <br><br>
+                    Option de Filière : <input type="text" value="{{ infos['option'] }}" readonly> <br><br>
+                    Département : <input type="text" value="{{ infos['dept'] }}" readonly><br><br>
+                    E-mail Institutionnel : <input type="text" value="{{ infos['mail'] }}" readonly>
+                </div>
+                <div class="champ_d">
+                    Sexe / Genre : <input type="text" value="{{ infos['sexe'] }}" readonly><br><br>
+                    Chef de Département : <input type="text" value="{{ infos['chef_dept'] }}" readonly><br><br>
+                    Semestre & Année : <input type="text" value="{{ infos['semestre'] }} ({{ infos['annee'] }})" readonly><br><br>
+                    Téléphone : <input type="text" value="{{ infos['tel'] }}" readonly>
+                </div>
+                <div class="compteur">
+                    Présences : <input type="text" value="{{ nb_presence }}" style="width:50px; text-align:center;" readonly>
+                </div>
+            </div>
+        </form>
+
+        <form method="POST" action="#">
+            <div class="search" style="margin-top:20px;">
+                <input type="text" name="cne_recherche" placeholder="Saisir CNE pour Recherche Avancée" required>
+            </div>
+            <div class="boutton_recherche">
+                <input type="submit" value="Rechercher Fiche Complète">
+            </div>
+        </form>
+
+        <div class="container_rapport" style="margin-top:25px;">
+            <form method="POST" action="#">
+                <div class="boutton_GR">
+                    <input type="submit" value="Générer Rapport (.docx)" style="background-color:#1e3d59; color:white;">
+                </div>
+            </form>
+            <br>
+            <form method="POST" action="#" target="_blank">
+                <div class="boutton_GR">
+                    <input type="submit" value="Visualiser la Liste d'Impression" style="background-color:#17b978; color:white;">
+                </div>
+            </form>
+        </div>
+    </div> 
+
+    <br><br>
+    <div class="boutton_accueil"><a href="{{ url_for('student.accueil') }}">⬅Retour</a></div>
+</body>
+</html>

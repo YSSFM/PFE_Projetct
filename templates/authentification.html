@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>recoJY - Authentification Académique</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: background-image 1s ease-in-out;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 1;
+    }
+
+    /* Header avec logo à gauche et infos à droite */
+    .auth-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .brand-logo .brand-name {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, #a8c0ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-logo .brand-tag {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.5px;
+    }
+
+    .info-header-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 10px 24px;
+      border-radius: 40px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-header-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .login-container {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .form-wrapper {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      width: 100%;
+      max-width: 440px;
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .logo-icon {
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .form-header h2 {
+      color: #1a202c;
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .form-header p {
+      color: #718096;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+
+    .input-group {
+      margin-bottom: 22px;
+      position: relative;
+    }
+
+    .input-group i {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a0aec0;
+      transition: color 0.3s ease;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 16px 16px 16px 52px;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #2d3748;
+      background: #f7fafc;
+      transition: all 0.3s ease;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    }
+
+    .input-group input:focus + i {
+      color: #667eea;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 16px;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 16px rgba(118, 75, 162, 0.2);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 20px rgba(118, 75, 162, 0.3);
+    }
+
+    .form-footer {
+      margin-top: 25px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #718096;
+    }
+
+    .form-footer a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .toggle-panel-btn {
+      background: none;
+      border: none;
+      color: #667eea;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .toggle-panel-btn:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .auth-header {
+        padding: 15px 20px;
+      }
+      .brand-logo .brand-name {
+        font-size: 1.2rem;
+      }
+      .brand-logo .brand-tag {
+        display: none;
+      }
+      .info-header-btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+      }
+      .form-wrapper {
+        padding: 30px 24px;
+      }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+  <!-- Header avec recoJY à gauche et Infos à droite -->
+  <div class="auth-header">
+    <div class="brand-logo">
+      <span class="brand-name">recoJY</span>
+      <span class="brand-tag">Intelligent Recognition System</span>
+    </div>
+    <button class="info-header-btn" onclick="showProjectInfo()">
+      <i class="fas fa-info-circle"></i> Infos Projet
+    </button>
+  </div>
+
+  <div class="login-container">
+    <div class="form-wrapper" id="auth-box">
+      
+      <div id="login-panel">
+        <div class="form-header">
+          <div class="logo-icon"><i class="fas fa-shield-alt"></i></div>
+          <h2>Espace Académique</h2>
+          <p>Authentification Portail d'Administration</p>
+        </div>
+        
+        <form action="{{ url_for('auth.login') }}" method="POST">
+          <div class="input-group">
+            <input type="text" name="username" placeholder="Identifiant unique" required>
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="input-group">
+            <input type="password" name="password" placeholder="Mot de passe" required>
+            <i class="fas fa-lock"></i>
+          </div>
+          <button type="submit" class="btn-submit">Se connecter</button>
+        </form>
+        
+        <div class="form-footer">
+          <button class="toggle-panel-btn" onclick="togglePanel('create')">Créer un compte</button>
+          <br><br>
+          <button class="toggle-panel-btn" onclick="togglePanel('reset')" style="color:#e53e3e;">Mot de passe oublié ?</button>
+        </div>
+      </div>
+
+      <div id="create-panel" style="display:none;">
+        <div class="form-header">
+          <div class="logo-icon"><i class="fas fa-user-plus"></i></div>
+          <h2>Nouvel Utilisateur</h2>
+          <p>Enregistrement d'un nouvel administrateur</p>
+        </div>
+        
+        <form action="{{ url_for('auth.creer_compte') }}" method="POST" onsubmit="return validatePassword()">
+          <div class="input-group">
+            <input type="text" name="new_username" id="new_username" placeholder="Choisissez un identifiant" required>
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="input-group">
+            <input type="password" name="new_password" id="new_password" placeholder="Définissez un mot de passe" required>
+            <i class="fas fa-lock"></i>
+          </div>
+          <div class="input-group">
+            <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirmez le mot de passe" required>
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <button type="submit" class="btn-submit">Créer le compte</button>
+        </form>
+        <div class="form-footer">
+          <button class="toggle-panel-btn" onclick="togglePanel('login')">Retour à la connexion</button>
+        </div>
+      </div>
+
+      <div id="reset-panel" style="display:none;">
+        <div class="form-header">
+          <div class="logo-icon"><i class="fas fa-key"></i></div>
+          <h2>Récupération</h2>
+          <p>Saisissez votre identifiant pour récupérer votre mot de passe</p>
+        </div>
+        
+        <form action="{{ url_for('auth.recuperer_password') }}" method="POST">
+          <div class="input-group">
+            <input type="text" name="reset_username" placeholder="Votre identifiant" required>
+            <i class="fas fa-user"></i>
+          </div>
+          <button type="submit" class="btn-submit">Récupérer</button>
+        </form>
+        <div class="form-footer">
+          <button class="toggle-panel-btn" onclick="togglePanel('login')">Retour à la connexion</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Images de fond dynamiques
+    const backgrounds = [
+      "url('/static/images/bg_abstract.jpg')",
+      "url('/static/images/bg_minimal.jpg')",
+      "url('/static/images/background.jpg')"
+    ];
+    
+    let currentBg = 0;
+    
+    function changeBackground() {
+      currentBg = (currentBg + 1) % backgrounds.length;
+      document.body.style.backgroundImage = backgrounds[currentBg];
+    }
+    
+    setInterval(changeBackground, 5000);
+    document.body.style.backgroundImage = backgrounds[0];
+
+    function togglePanel(panel) {
+      document.getElementById('login-panel').style.display = panel === 'login' ? 'block' : 'none';
+      document.getElementById('create-panel').style.display = panel === 'create' ? 'block' : 'none';
+      document.getElementById('reset-panel').style.display = panel === 'reset' ? 'block' : 'none';
+    }
+
+    function validatePassword() {
+      const password = document.getElementById('new_password').value;
+      const confirm = document.getElementById('confirm_password').value;
+      
+      if (password !== confirm) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Les mots de passe ne correspondent pas !',
+          confirmButtonColor: '#667eea'
+        });
+        return false;
+      }
+      
+      if (password.length < 4) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Le mot de passe doit contenir au moins 4 caractères !',
+          confirmButtonColor: '#667eea'
+        });
+        return false;
+      }
+      
+      return true;
+    }
+
+    function showProjectInfo() {
+      Swal.fire({
+        title: '<span style="font-size: 1.6rem;">🎓 recoJY</span>',
+        html: `
+          <div style="text-align: left; line-height: 1.8;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px; border-radius: 12px; color: white; margin-bottom: 20px; text-align: center;">
+              <i class="fas fa-brain" style="font-size: 2rem;"></i>
+              <p style="margin-top: 8px;"><strong>Système de Reconnaissance Faciale Académique</strong></p>
+            </div>
+            
+            <p><strong>📌 Technologies :</strong> Flask, Double CNN, OpenCV, TensorFlow</p>
+            <p><strong>📌 Version :</strong> 2.0 Professional</p>
+            
+            <p style="margin-top: 15px;"><strong>⚡ Fonctionnalités :</strong></p>
+            <ul style="margin-left: 20px;">
+              <li>✓ Authentification sécurisée</li>
+              <li>✓ Enregistrement biométrique</li>
+              <li>✓ Reconnaissance faciale anti-spoofing</li>
+              <li>✓ Gestion des présences en temps réel</li>
+              <li>✓ Génération de rapports (PDF/DOCX)</li>
+            </ul>
+            
+            <hr style="margin: 15px 0;">
+            <p style="text-align: center; font-size: 0.85rem;">
+              <i class="fas fa-graduation-cap"></i> Projet de Fin d'Études 2026<br>
+              École Supérieure de Technologie - Meknès
+            </p>
+          </div>
+        `,
+        icon: 'info',
+        confirmButtonText: 'Fermer',
+        confirmButtonColor: '#667eea',
+        width: '520px'
+      });
+    }
+
+    {% if error %}
+      Swal.fire({ title: 'Échec', text: 'Identifiant ou mot de passe incorrect.', icon: 'error', confirmButtonColor: '#667eea' });
+    {% endif %}
+    {% if account_created %}
+      Swal.fire({ title: 'Succès !', text: 'Compte créé avec succès.', icon: 'success', confirmButtonColor: '#667eea' });
+    {% endif %}
+    {% if error_create %}
+      Swal.fire({ title: 'Erreur', text: 'Cet identifiant est déjà pris.', icon: 'error', confirmButtonColor: '#667eea' });
+    {% endif %}
+    {% if error_reset %}
+      Swal.fire({ title: 'Introuvable', text: 'Aucun utilisateur ne possède ce nom.', icon: 'error', confirmButtonColor: '#667eea' });
+    {% endif %}
+    {% if recovered_password %}
+      Swal.fire({ title: 'Compte trouvé !', html: 'Le mot de passe pour <b>{{ recovered_user }}</b> est : <br><br><code style="font-size:1.4rem; color:#764ba2;">{{ recovered_password }}</code>', icon: 'info', confirmButtonColor: '#667eea' });
+    {% endif %}
+  </script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>recoJY - Reconnaissance Faciale</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 1s ease-in-out;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #ffffff 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: rgba(255,255,255,0.8);
+            font-size: 1rem;
+        }
+        
+        .video-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .video-feed {
+            width: 100%;
+            max-width: 900px;
+            border-radius: 24px;
+            border: 3px solid #00d4ff;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            background: #000;
+        }
+        
+        .info-panel {
+            background: #0f111a;
+            border: 1px solid #1e2a3a;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .model-badge {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 30px;
+            padding: 8px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #00d4ff;
+            font-size: 0.85rem;
+        }
+        
+        .status-badge {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 30px;
+            padding: 8px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #10b981;
+            font-size: 0.85rem;
+        }
+        
+        .status-badge i {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .btn-back {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 40px;
+            padding: 10px 25px;
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        
+        .instructions {
+            text-align: center;
+            margin-top: 20px;
+            color: #8ca3ba;
+            font-size: 0.85rem;
+        }
+        
+        @media (max-width: 768px) {
+            .video-feed {
+                max-width: 100%;
+            }
+            .info-panel {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-camera"></i> Reconnaissance Faciale</h1>
+        <p>Placez-vous face à la caméra pour la détection automatique et l'enregistrement</p>
+    </div>
+
+    <div class="video-container">
+        <img src="{{ url_for('presence.video_feed') }}" class="video-feed" alt="Flux vidéo en direct..." id="videoFeed">
+    </div>
+
+    <div class="info-panel">
+        <div class="model-badge" id="modelBadge">
+            <i class="fas fa-microchip"></i>
+            Moteur actif: <strong id="modelName">Chargement...</strong>
+        </div>
+        <div class="status-badge">
+            <i class="fas fa-circle" style="color: #10b981;"></i>
+            Scan & Analyse en cours...
+        </div>
+        <a href="{{ url_for('student.accueil') }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Retour au Dashboard
+        </a>
+    </div>
+    
+    <div class="instructions">
+        <i class="fas fa-info-circle"></i> Le système capture votre visage, extrait ses caractéristiques et les compare au classifieur SVM en arrière-plan.
+    </div>
+</div>
+
+<script>
+    // Images de fond dynamiques
+    const backgrounds = [
+        "url('/static/images/bg_abstract.jpg')",
+        "url('/static/images/bg_minimal.jpg')",
+        "url('/static/images/background.jpg')"
+    ];
+    
+    let currentBg = 0;
+    
+    function changeBackground() {
+        currentBg = (currentBg + 1) % backgrounds.length;
+        document.body.style.backgroundImage = backgrounds[currentBg];
+    }
+    
+    setInterval(changeBackground, 5000);
+    document.body.style.backgroundImage = backgrounds[0];
+
+    // 💡 GESTION DU FLUX EN DIRECT
+    // La balise <img> lit automatiquement le flux MJPEG de Flask nativement.
+    // Pas besoin de setInterval() pour modifier le .src, sinon le flux plante !
+    const videoFeed = document.getElementById('videoFeed');
+
+    // Charger dynamiquement l'information sur le modèle actif
+    async function loadActiveModel() {
+        try {
+            // Ajustement de l'endpoint vers ton API existante
+            const res = await fetch('/api/get-current-model'); 
+            const data = await res.json();
+            const modelNameSpan = document.getElementById('modelName');
+            
+            if (modelNameSpan && data && data.model_type) {
+                if (data.model_type === 'pretrained') {
+                    modelNameSpan.innerText = 'Pré-entraîné (MobileNetV2)';
+                } else if (data.model_type === 'custom') {
+                    modelNameSpan.innerText = 'Personnalisé (Custom CNN)';
+                } else {
+                    modelNameSpan.innerText = data.model_type;
+                }
+            }
+        } catch(e) {
+            console.error('Erreur lors de la récupération du modèle:', e);
+            const modelNameSpan = document.getElementById('modelName');
+            if (modelNameSpan) modelNameSpan.innerText = 'Indéterminé';
+        }
+    }
+
+    // Lancement automatique des configurations
+    loadActiveModel();
+    
+    // Déclencheur du signal de démarrage caméra côté backend
+    async function startRecognition() {
+        try {
+            await fetch('/api/recognition/start', { method: 'POST' });
+            console.log('Faisceau de détection initialisé.');
+        } catch(e) {
+            console.error('Erreur démarrage détection:', e);
+        }
+    }
+    
+    startRecognition();
+    
+    // Libération de la caméra si l'utilisateur quitte brusquement l'onglet
+    window.addEventListener('beforeunload', async () => {
+        try {
+            await fetch('/api/recognition/stop', { method: 'POST' });
+        } catch(e) {}
+    });
+</script>
+</body>
+</html>

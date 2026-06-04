@@ -1,0 +1,81 @@
+/* style_impression.css */
+body {
+    background-image: url('../static/dep.png');
+    background-size: cover;
+    font-family: Arial, sans-serif;
+    margin: 40px;
+    background-color: #ffffff;
+}
+
+.header {
+    background-color: rgba(255, 255, 255, 0.87);
+    backdrop-filter: blur(6px);
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.logo {
+    width: 215px;
+    position: absolute;
+    top: 50%;
+    left: 40px;
+    transform: translateY(-50%);
+}
+
+.info_rapport {
+    position: absolute;
+    right: 30px;
+    top: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #ffffff;
+}
+
+td,
+th {
+    border: 1px solid #000000;
+    padding: 8px 6px;
+    text-align: center;
+    font-size: 11px;
+    /* Légèrement plus petit pour s'assurer que les 14 colonnes passent sur du A4 paysage */
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+/* Règles spécifiques pour le déclenchement de l'impression système (Ctrl+P) */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        background-image: none !important;
+        background-color: #ffffff;
+        margin: 10mm !important;
+    }
+
+    .header {
+        box-shadow: none !important;
+        background: none !important;
+        backdrop-filter: none !important;
+    }
+
+    table {
+        page-break-inside: auto;
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+}

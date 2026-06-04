@@ -1,0 +1,104 @@
+/* style_detection.css et style_entrainement.css */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-image: url('../static/bg.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 50px 40px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    box-sizing: border-box;
+}
+
+h1 {
+    color: #2c3e50;
+    margin-top: 0;
+    font-size: 2.2em;
+}
+
+p {
+    color: #555;
+    font-size: 1.1em;
+    line-height: 1.5;
+    margin-bottom: 30px;
+}
+
+.btn {
+    padding: 15px 35px;
+    background-color: #007bff;
+    /* Bleu pour le scan */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+}
+
+/* Note pour style_entrainement.css : Changez simplement la couleur du bouton en vert (#28a745) si désiré */
+.btn-success {
+    background-color: #28a745;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
+.message {
+    margin-top: 25px;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.message.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+.boutton_accueil {
+    margin-top: 30px;
+}
+
+.boutton_accueil a {
+    text-decoration: none;
+    font-size: 20px;
+    color: #333;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: background 0.3s;
+}
+
+.boutton_accueil a:hover {
+    background: rgba(255, 255, 255, 0.9);
+}
