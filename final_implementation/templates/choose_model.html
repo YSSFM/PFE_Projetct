@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>recoJY - Choix du modèle</title>
+    <title>recoJY - Choix du modèle & Scan</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -37,12 +37,12 @@
             z-index: 2;
             max-width: 1000px;
             margin: 0 auto;
-            padding: 60px 20px;
+            padding: 40px 20px;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
         }
         
         .header h1 {
@@ -165,6 +165,7 @@
         
         .btn-container {
             text-align: center;
+            margin-bottom: 40px;
         }
         
         .btn-confirm {
@@ -184,6 +185,46 @@
             box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
         }
         
+        /* 📹 STYLE DU SCANNER WEBCAM LIVE */
+        .scanner-container {
+            display: none; /* Rendu visible dynamiquement après validation */
+            text-align: center;
+            background: #0f111a;
+            border: 2px dashed #1e2a3a;
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 700px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .scanner-container h3 {
+            color: #f1f5f9;
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+        
+        .scanner-container p {
+            color: #8ca3ba;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .video-wrapper {
+            border: 4px solid #1e2a3a;
+            border-radius: 16px;
+            overflow: hidden;
+            display: inline-block;
+            background: #000;
+            line-height: 0;
+        }
+        
+        .video-wrapper img {
+            width: 100%;
+            max-width: 640px;
+            height: auto;
+        }
+
         .info-text {
             text-align: center;
             margin-top: 30px;
@@ -235,11 +276,20 @@
 
     <div class="btn-container">
         <button class="btn-confirm" onclick="confirmChoice()">
-            <i class="fas fa-check-circle"></i> Confirmer et continuer
+            <i class="fas fa-check-circle"></i> Valider et ouvrir le scanner
         </button>
     </div>
+
+    <div class="scanner-container" id="scanner-block">
+        <h3><i class="fas fa-camera-retro" style="color: #00d4ff;"></i> Webcam active en temps réel</h3>
+        <p>Le flux vidéo ci-dessous applique automatiquement les prédictions du SVM calibré.</p>
+        <div class="video-wrapper">
+            <img id="webcam-feed" src="" alt="En attente du flux vidéo...">
+        </div>
+    </div>
+
     <div class="info-text">
-        <i class="fas fa-info-circle"></i> Vous pourrez modifier ce choix ultérieurement
+        <i class="fas fa-info-circle"></i> Vous pouvez basculer d'un moteur à un autre à tout moment.
     </div>
 </div>
 
@@ -278,6 +328,20 @@
         }
     }
 
+    // ⚡ VÉRIFICATION ET PRÉ-SELECTION DU MODÈLE ACTUEL DÈS LE CHARGEMENT DE LA PAGE
+    window.addEventListener('DOMContentLoaded', async () => {
+        try {
+            // Interroge l'endpoint pour connaître le modèle configuré en local
+            const res = await fetch('/api/get-current-model'); 
+            const data = await res.json();
+            if(data && data.model_type) {
+                selectModel(data.model_type);
+            }
+        } catch (e) {
+            console.log("Impossible de pré-charger le modèle actif:", e);
+        }
+    });
+
     async function confirmChoice() {
         if (!selectedModel) {
             Swal.fire({
@@ -292,8 +356,8 @@
         }
 
         Swal.fire({
-            title: 'Chargement...',
-            text: 'Initialisation du modèle sélectionné',
+            title: 'Configuration...',
+            text: 'Mise à jour du moteur et alignement du classifieur SVM...',
             allowOutsideClick: false,
             didOpen: () => { Swal.showLoading(); }
         });
@@ -310,28 +374,10 @@
             if (data.success) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Modèle sélectionné',
-                    text: `Le modèle ${selectedModel === 'pretrained' ? 'pré-entraîné' : 'personnalisé'} a été activé.`,
+                    title: 'Moteur de reconnaissance prêt !',
+                    text: `Le modèle ${selectedModel === 'pretrained' ? 'pré-entraîné' : 'personnalisé'} a été activé. Démarrage de la caméra.`,
                     confirmButtonColor: '#00d4ff',
                     background: '#0f111a',
                     color: '#e2e8f0'
                 }).then(() => {
-                    window.location.href = '/';
-                });
-            } else {
-                throw new Error(data.error);
-            }
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Erreur',
-                text: error.message,
-                confirmButtonColor: '#00d4ff',
-                background: '#0f111a',
-                color: '#e2e8f0'
-            });
-        }
-    }
-</script>
-</body>
-</html>
+                    // 🎬 OUVERTURE DE LA CAMÉRA EN CONTINU SANS REDIRE

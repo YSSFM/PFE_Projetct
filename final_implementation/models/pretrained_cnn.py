@@ -1,123 +1,76 @@
 # models/pretrained_cnn.py
-# CNN pré-entraîné MobileNetV2 adapté pour la reconnaissance faciale
+# Modèle basé sur le Transfer Learning (MobileNetV2)
 
 import numpy as np
-import tensorflow as tf
-from tensorflow.keras import layers, models
-from tensorflow.keras.applications import MobileNetV2
+import cv2
 import os
-import json
-from datetime import datetime
+from tensorflow.keras.models import load_model
 
 class PretrainedCNN:
-    """CNN pré-entraîné MobileNetV2"""
+    """
+    Classe gérant l'extracteur de caractéristiques pré-entraîné (MobileNetV2)
+    exporté depuis Google Colab pour le projet RecoJY.
+    """
     
-    def __init__(self, input_shape=(128, 128, 3), embedding_dim=128):
+    def __init__(self, input_shape=(224, 224, 3), embedding_dim=512):
+        # Attention : MobileNetV2 requiert nativement du 224x224x3 et produit un embedding 512D
         self.input_shape = input_shape
         self.embedding_dim = embedding_dim
-        self.base_model = None
         self.model = None
-        self.is_built = False
-        self.is_trained = False
-        self.weights_path = "models/pretrained_cnn_weights.h5"
-        self.metrics_path = "models/pretrained_cnn_metrics.json"
+        self.weights_path = "models/recojy_extractor.h5"
         
-    def build(self, fine_tune=False):
-        """Construit le modèle MobileNetV2 adapté"""
-        # Chargement sans la tête de classification
-        self.base_model = MobileNetV2(
-            input_shape=self.input_shape,
-            include_top=False,
-            weights='imagenet',
-            pooling='avg'
-        )
-        
-        # Freeze les couches du modèle de base
-        self.base_model.trainable = False
-        
-        # Construction du modèle complet
-        inputs = layers.Input(shape=self.input_shape)
-        
-        # Prétraitement spécifique à MobileNetV2
-        x = tf.keras.applications.mobilenet_v2.preprocess_input(inputs)
-        x = self.base_model(x)
-        
-        # Couches additionnelles
-        x = layers.Dense(512, activation='relu')(x)
-        x = layers.BatchNormalization()(x)
-        x = layers.Dropout(0.3)(x)
-        
-        x = layers.Dense(256, activation='relu')(x)
-        x = layers.BatchNormalization()(x)
-        x = layers.Dropout(0.3)(x)
-        
-        outputs = layers.Dense(self.embedding_dim, activation='linear', name='embedding')(x)
-        
-        self.model = models.Model(inputs=inputs, outputs=outputs)
-        self.is_built = True
-        
-        self.model.compile(
-            optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001),
-            loss='mse',
-            metrics=['mae']
-        )
-        
-        print(f"[PretrainedCNN] MobileNetV2 adapté. Paramètres: {self.model.count_params():,}")
-        
-        return self.model
-    
-    def get_model_summary(self):
-        """Retourne un résumé du modèle"""
-        if self.model is None:
-            self.build()
-        return {
-            'total_params': self.model.count_params(),
-            'trainable_params': 0,  # MobileNetV2 frozen
-            'non_trainable_params': self.model.count_params(),
-            'base_model_name': 'MobileNetV2',
-            'pretrained_on': 'ImageNet',
-            'input_shape': self.input_shape,
-            'embedding_dim': self.embedding_dim
-        }
-    
-    def load_weights(self):
-        """Charge les poids fine-tunés"""
+    def build(self):
+        """Initialise ou charge le modèle d'extraction"""
         if os.path.exists(self.weights_path):
-            if self.model is None:
-                self.build()
-            self.model.load_weights(self.weights_path)
-            self.is_trained = True
-            print("[PretrainedCNN] Poids chargés")
-            return True
+            try:
+                self.model = load_model(self.weights_path, compile=False)
+                print(f"[PretrainedCNN] ✅ Modèle chargé avec succès depuis {self.weights_path}")
+            except Exception as e:
+                print(f"[PretrainedCNN] ❌ Erreur lors du chargement du fichier .h5 : {str(e)}")
         else:
-            print("[PretrainedCNN] Aucun poids trouvé")
-            if self.model is None:
-                self.build()
-            return False
-    
+            print(f"[PretrainedCNN] ⚠️ Fichier {self.weights_path} introuvable. Le modèle n'est pas initialisé.")
+            
+    def load_weights(self):
+        """Alias pour s'aligner avec la structure initiale de l'application"""
+        self.build()
+        
     def save_weights(self):
-        """Sauvegarde les poids"""
-        if self.model is not None:
-            os.makedirs("models", exist_ok=True)
-            self.model.save_weights(self.weights_path)
-            self.is_trained = True
-            print("[PretrainedCNN] Poids sauvegardés")
-    
+        """L'extracteur de caractéristiques est figé en production, pas besoin de ré-sauvegarder"""
+        pass
+        
+    def get_model_summary(self):
+        """Retourne un résumé du modèle si chargé"""
+        if self.model:
+            return f"MobileNetV2 Feature Extractor (Output: {self.embedding_dim}D)"
+        return "Modèle non chargé"
+        
     def extract_features(self, face_image):
-        """Extrait l'empreinte faciale"""
+        """
+        Extrait l'embedding (la signature) d'un visage pour le live webcam.
+        Applique un prétraitement adaptatif déterministe (sans augmentation de données destructrice).
+        """
         if self.model is None:
-            self.build()
-        
-        if face_image.shape != self.input_shape:
-            face_image = tf.image.resize(face_image, self.input_shape[:2])
-        
-        if face_image.dtype == np.uint8:
-            face_image = face_image.astype(np.float32)
-        
-        if len(face_image.shape) == 3:
-            face_image = np.expand_dims(face_image, axis=0)
-        
-        embedding = self.model.predict(face_image, verbose=0)
-        embedding = embedding / (np.linalg.norm(embedding) + 1e-8)
-        
-        return embedding.flatten()
+            print("[PretrainedCNN] ❌ Impossible d'extraire : modèle non chargé.")
+            return np.zeros(self.embedding_dim, dtype=np.float32)
+            
+        try:
+            # --- Prétraitement adaptatif pour le Live Webcam ---
+            # 1. Redimensionnement aux dimensions strictes de MobileNetV2 (224x224)
+            img = cv2.resize(face_image, (self.input_shape[1], self.input_shape[0]))
+            
+            # 2. Conversion sécurisée en RGB (OpenCV lit en BGR)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            
+            # 3. Normalisation standard [0, 1] identique à l'entraînement
+            img = img.astype(np.float32) / 255.0
+            
+            # 4. Ajout de la dimension de batch (1, 224, 224, 3)
+            img_batch = np.expand_dims(img, axis=0)
+            
+            # Extraction par le réseau de neurones
+            embedding = self.model.predict(img_batch, verbose=0)[0]
+            return embedding
+            
+        except Exception as e:
+            print(f"[PretrainedCNN] ❌ Erreur lors de l'extraction des caractéristiques : {str(e)}")
+            return np.zeros(self.embedding_dim, dtype=np.float32)

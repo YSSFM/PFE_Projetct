@@ -10,12 +10,6 @@ def eye_aspect_ratio(eye):
     """
     Calcule l'Eye Aspect Ratio (EAR) pour un œil donné.
     Plus l'œil est ouvert, plus le EAR est grand.
-    
-    Args:
-        eye: points de repère de l'œil (6 points)
-        
-    Returns:
-        float: ratio d'aspect
     """
     # Distance verticale entre les paupières (points 1-5 et 2-4)
     A = dist.euclidean(eye[1], eye[5])
@@ -35,12 +29,6 @@ class AntiSpoofingDetector:
     """
     
     def __init__(self, ear_threshold=0.23, consec_frames_required=2, required_blinks=1):
-        """
-        Args:
-            ear_threshold: seuil en dessous duquel on considère l'œil fermé
-            consec_frames_required: nombre de frames consécutives nécessaires pour valider un clignement
-            required_blinks: nombre de clignements requis
-        """
         self.EYE_AR_THRESH = ear_threshold
         self.EYE_AR_CONSEC_FRAMES = consec_frames_required
         self.REQUIRED_BLINKS = required_blinks
@@ -55,15 +43,7 @@ class AntiSpoofingDetector:
     def process_eyes(self, left_eye, right_eye):
         """
         Traite les yeux détectés et met à jour l'état du clignement.
-        
-        Args:
-            left_eye: points de repère de l'œil gauche
-            right_eye: points de repère de l'œil droit
-            
-        Returns:
-            tuple: (total_blinks, validated)
         """
-        # Calcul des EAR pour les deux yeux
         left_ear = eye_aspect_ratio(left_eye)
         right_ear = eye_aspect_ratio(right_eye)
         ear = (left_ear + right_ear) / 2.0
@@ -81,14 +61,15 @@ class AntiSpoofingDetector:
         
         return self.total_blinks, self.validated
     
-    def get_status_message(self):
-        """Retourne un message d'état pour l'affichage"""
+    def get_status_message(self, reco_time=None):
+        """Retourne un message d'état pour l'affichage (Bash / OpenCV)"""
+        time_str = f" [⏱️ Vitesse: {reco_time*1000:.1f} ms]" if reco_time else ""
         if self.validated:
-            return f"✅ Authentifié - {self.total_blinks}/{self.REQUIRED_BLINKS} clignements"
+            return f"✅ Authentifié - {self.total_blinks}/{self.REQUIRED_BLINKS} clignements{time_str}"
         elif self.total_blinks > 0:
-            return f"👁️ Clignements détectés : {self.total_blinks}/{self.REQUIRED_BLINKS}"
+            return f"👁️ Clignements détectés : {self.total_blinks}/{self.REQUIRED_BLINKS}{time_str}"
         else:
-            return f"👀 Clignez des yeux pour vous authentifier (0/{self.REQUIRED_BLINKS})"
+            return f"👀 Clignez des yeux pour vous authentifier (0/{self.REQUIRED_BLINKS}){time_str}"
     
     def get_validation_text(self):
         """Texte à afficher pour demander le clignement"""

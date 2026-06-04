@@ -1,213 +1,163 @@
-# ===================================================================
 # models/model_wrapper.py
-# WRAPPER POUR L'INTÉGRATION DES MODÈLES - À COMPLÉTER
-# ===================================================================
-# 
-# CE FICHIER SERT D'INTERFACE ENTRE NOTRE MODÈLE ET L'APPLICATION
-# 
-# ON DOIT :
-# 1. IMPLÉMENTER la classe FaceRecognitionModel
-# 2. REMPLACER les méthodes extract_embedding() et compare()
-# 3. CHARGER les poids des modèles dans __init__ ou load_models()
-# 
-# ===================================================================
+# WRAPPER POUR L'INTÉGRATION DES MODÈLES - S'ADAPTE À L'ARCHITECTURE INITIALE
 
 import numpy as np
 import cv2
 import os
+import pickle
+import json
+from .pretrained_cnn import PretrainedCNN
 
 class FaceRecognitionModel:
     """
-    Classe wrapper pour le modèle de reconnaissance faciale.
-    
-    À COMPLÉTER :
-    - Implémenter le chargement des modèles
-    - Implémenter l'extraction d'embeddings
-    - Implémenter la comparaison entre embeddings
+    Classe wrapper qui fait l'interface entre l'application Flask (webcam live)
+    et nos modèles réels de reconnaissance faciale.
     """
     
     def __init__(self):
-        self.pretrained_model = None
-        self.custom_model = None
-        self.active_model = 'pretrained'  # 'pretrained' ou 'custom'
-        self.embedding_dim = 128
-        self.threshold = 0.55
+        # Initialisation du conteneur selon l'architecture d'origine
+        self.pretrained_cnn_instance = PretrainedCNN(input_shape=(224, 224, 3), embedding_dim=512)
+        self.custom_model = None # Sera complété plus tard lors de la phase "From Scratch"
         
-        # Charger les modèles
+        self.active_model = 'pretrained'  # 'pretrained' ou 'custom'
+        self.embedding_dim = 512
+        
+        # Tes filtres d'intervalles de confiance fétiches 🎛️
+        self.seuil_haut = 0.75
+        self.seuil_bas = 0.50
+        
+        # Fichiers du classifieur de Transfer Learning
+        self.svm_pipeline = None
+        self.class_names = []
+        
+        # Chargement automatique des composants au démarrage de l'app
         self.load_models()
     
+    def load_model_choice(self):
+        """Lit dynamiquement le choix du modèle dans le fichier JSON de l'application"""
+        config_file = "models/model_choice.json"
+        if os.path.exists(config_file):
+            try:
+                with open(config_file, 'r') as f:
+                    data = json.load(f)
+                    return data.get('model_type', 'pretrained')
+            except:
+                pass
+        return 'pretrained'
+        
     def load_models(self):
-        """
-        Charge les modèles pré-entraîné et personnalisé.
+        """Charge l'extracteur de caractéristiques et le classifieur SVM associé"""
+        # Mise à jour du modèle actif selon le choix de l'utilisateur
+        self.active_model = self.load_model_choice()
+        print(f"[Wrapper] ⚙️ Modèle actif détecté : {self.active_model}")
         
-        À COMPLÉTER :
-        - Charger les poids des modèles depuis les fichiers
-        - Initialiser self.pretrained_model et self.custom_model
-        """
-        # ========== À REMPLACER PAR NOTRE CODE ==========
-        print("[INFO] Chargement des modèles... (À implémenter)")
-        
-        # Exemple avec TensorFlow/Keras :
-        # from tensorflow.keras.models import load_model
-        # self.pretrained_model = load_model('models/pretrained_model.h5')
-        # self.custom_model = load_model('models/custom_model.h5')
-        
-        # Simulation
-        self.pretrained_model = {"name": "pretrained", "loaded": True}
-        self.custom_model = {"name": "custom", "loaded": True}
-        
-        print("[INFO] Modèles chargés avec succès")
-    
+        if self.active_model == 'pretrained':
+            # 1. Charger l'extracteur MobileNetV2
+            self.pretrained_cnn_instance.build()
+            self.embedding_dim = 512
+            
+            # 2. Charger le classifieur SVM (.pkl) exporté de Colab
+            path_classifier = 'models/recojy_classifier.pkl'
+            if os.path.exists(path_classifier):
+                with open(path_classifier, "rb") as f:
+                    self.svm_pipeline = pickle.load(f)
+                print("[Wrapper] ✅ Classifieur SVM Pré-entraîné chargé.")
+                
+            # 3. Charger le dictionnaire des noms associés
+            path_classes = 'models/recojy_classes.pkl'
+            if os.path.exists(path_classes):
+                with open(path_classes, "rb") as f:
+                    self.class_names = pickle.load(f)
+                print(f"[Wrapper] ✅ Classes chargées : {self.class_names}")
+        else:
+            print("[Wrapper] ⚠️ Mode 'custom' sélectionné (En attente d'implémentation complète).")
+
     def set_active_model(self, model_type):
-        """
-        Définit le modèle actif.
-        
-        Args:
-            model_type (str): 'pretrained' ou 'custom'
-        """
+        """Permet aux routes de basculer le modèle dynamiquement"""
         if model_type in ['pretrained', 'custom']:
             self.active_model = model_type
-            print(f"[INFO] Modèle actif: {model_type}")
+            self.load_models()
             return True
         return False
     
     def preprocess_image(self, image):
         """
-        Prétraite l'image pour le modèle.
-        
-        Args:
-            image (numpy.ndarray): Image BGR
-        
-        Returns:
-            numpy.ndarray: Image prétraitée
+        Laissé ici pour la compatibilité avec l'ancienne structure,
+        le prétraitement live est maintenant délégué directement au modèle.
         """
-        # Redimensionnement
-        img = cv2.resize(image, (160, 160))
-        
-        # Conversion RGB
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        
-        # Normalisation
-        img = img.astype(np.float32) / 127.5 - 1.0
-        
-        return img
+        return image
     
     def extract_embedding(self, face_image):
-        """
-        Extrait l'embedding d'un visage.
+        """Extrait l'embedding en utilisant le modèle actif"""
+        self.active_model = self.load_model_choice() # Vérification à la volée
         
-        À COMPLÉTER PAR VOTRE BINÔME :
-        - Utiliser le modèle actif pour extraire l'embedding
-        
-        Args:
-            face_image (numpy.ndarray): Image du visage
-        
-        Returns:
-            numpy.ndarray: Embedding (vecteur 1D normalisé)
-        """
-        if face_image is None or face_image.size == 0:
-            return None
-        
-        # Prétraitement
-        img = self.preprocess_image(face_image)
-        
-        # ========== À REMPLACER PAR NOTRE CODE ==========
-        # Exemple avec notre modèle :
-        # if self.active_model == 'pretrained':
-        #     embedding = self.pretrained_model.predict(np.expand_dims(img, axis=0))[0]
-        # else:
-        #     embedding = self.custom_model.predict(np.expand_dims(img, axis=0))[0]
-        
-        # Simulation (à remplacer)
-        import numpy as np
-        embedding = np.random.randn(self.embedding_dim).astype(np.float32)
-        
-        # Normalisation
-        norm = np.linalg.norm(embedding)
-        if norm > 0:
-            embedding = embedding / norm
-        
-        return embedding
+        if self.active_model == 'pretrained':
+            return self.pretrained_cnn_instance.extract_features(face_image)
+        else:
+            # Section réservée pour ton modèle custom from scratch
+            return np.zeros(self.embedding_dim, dtype=np.float32)
     
     def compare_embeddings(self, embedding1, embedding2):
-        """
-        Compare deux embeddings par similarité cosinus.
-        
-        Args:
-            embedding1, embedding2: Vecteurs d'embedding
-        
-        Returns:
-            float: Score de similarité (0-1)
-        """
+        """Comparaison par produit scalaire (similarité cosinus si vecteurs normalisés)"""
         if embedding1 is None or embedding2 is None:
             return 0.0
-        
-        similarity = np.dot(embedding1, embedding2)
-        return float(similarity)
+        return float(np.dot(embedding1, embedding2))
     
-    def find_best_match(self, embedding, reference_embeddings, reference_labels):
+    def recognize_live_face(self, face_image):
         """
-        Trouve le meilleur match parmi les références.
-        
-        Args:
-            embedding: Embedding à comparer
-            reference_embeddings: Liste des embeddings de référence
-            reference_labels: Labels correspondants
-        
+        Analyse le visage en direct de la webcam et applique la logique d'intervalles.
+        Cette méthode s'interface parfaitement avec tes fichiers de service et de routes.
         Returns:
-            tuple: (best_label, best_score, best_index)
+            tuple: (nom_predit, confiance, statut)
         """
-        if embedding is None or len(reference_embeddings) == 0:
-            return None, 0.0, -1
+        # 1. Extraction de l'embedding (Gère le redimensionnement et la normalisation en live)
+        embedding = self.extract_embedding(face_image)
         
-        best_score = -1.0
-        best_idx = -1
-        
-        for i, ref_emb in enumerate(reference_embeddings):
-            score = self.compare_embeddings(embedding, ref_emb)
-            if score > best_score:
-                best_score = score
-                best_idx = i
-        
-        if best_score >= self.threshold and best_idx >= 0:
-            return reference_labels[best_idx], best_score, best_idx
-        
-        return None, best_score, -1
-    
-    def set_threshold(self, threshold):
-        """Définit le seuil de reconnaissance"""
-        self.threshold = max(0.3, min(0.9, threshold))
-    
-    def get_model_info(self):
-        """Retourne les informations sur les modèles"""
-        return {
-            'active_model': self.active_model,
-            'embedding_dim': self.embedding_dim,
-            'threshold': self.threshold,
-            'pretrained_loaded': self.pretrained_model is not None,
-            'custom_loaded': self.custom_model is not None
-        }
+        if self.active_model == 'pretrained':
+            if self.svm_pipeline is None or len(self.class_names) == 0:
+                return "Modèle non prêt", 0.0, "ERREUR"
+                
+            # Ajustement du format pour l'entrée attendue par Scikit-Learn (1, 512)
+            embedding_reshaped = np.expand_dims(embedding, axis=0)
+            
+            # 2. Calcul des probabilités par le SVM
+            probabilities = self.svm_pipeline.predict_proba(embedding_reshaped)[0]
+            max_idx = np.argmax(probabilities)
+            confiance = probabilities[max_idx]
+            nom_suspect = self.class_names[max_idx]
+            
+            # 3. Application rigoureuse de la logique d'intervalles 🎛️
+            if confiance >= self.seuil_haut:
+                return nom_suspect, float(confiance), "CERTITUDE"
+            elif self.seuil_bas <= confiance < self.seuil_haut:
+                return nom_suspect, float(confiance), "SUSPECT"
+            else:
+                return "Inconnu", float(confiance), "INCONNU"
+                
+        return "Inconnu", 0.0, "INCONNU"
 
 
-# Instance globale
+# ===================================================================
+# INSTANCE GLOBALE ET WRAPPERS POUR RESTER CONFORME À L'APP INITIALE
+# ===================================================================
+
 _model_instance = None
 
-
 def get_model():
-    """Récupère l'instance unique du modèle"""
     global _model_instance
     if _model_instance is None:
         _model_instance = FaceRecognitionModel()
     return _model_instance
 
-
 def extract_embedding(face_image):
-    """Wrapper pour l'extraction d'embedding"""
+    """Garantit que les scripts de services existants continuent de fonctionner"""
     model = get_model()
     return model.extract_embedding(face_image)
 
-
-def compare_embeddings(emb1, emb2):
-    """Wrapper pour la comparaison"""
+def predict_student_live(face_image):
+    """
+    Méthode principale à appeler dans presence_routes.py lors de la réception
+    du flux vidéo de la webcam.
+    """
     model = get_model()
-    return model.compare_embeddings(emb1, emb2)
+    return model.recognize_live_face(face_image)
