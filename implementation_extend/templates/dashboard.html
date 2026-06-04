@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - RecoJY</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .logo span {
+            color: #ffd700;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-name {
+            color: white;
+            font-size: 16px;
+        }
+        
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .dashboard-header h1 {
+            color: white;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .dashboard-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+        }
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: white;
+        }
+        
+        .card-header h2 {
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .card-body p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .card-footer {
+            padding: 15px 25px 25px 25px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4); }
+        .btn-warning { background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); color: #1a1a2e; }
+        .btn-warning:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4); }
+        .btn-secondary { background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; }
+        .btn-secondary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4); }
+        .btn-info { background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; }
+        .btn-info:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4); }
+        .btn-danger { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; }
+        .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4); }
+        
+        .status-area {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .status-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-message {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #495057;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .notification.success { background-color: #28a745; }
+        .notification.error { background-color: #dc3545; }
+        .notification.info { background-color: #17a2b8; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar { flex-direction: column; gap: 15px; text-align: center; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .dashboard-header h1 { font-size: 28px; }
+            .container { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Reco<span>JY</span></div>
+        <div class="user-info">
+            <span class="user-name">👋 Bonjour, {{ username | default('Admin') }}</span>
+            <a href="/admin/logout" class="logout-btn">🚪 Déconnexion</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Tableau de bord Administrateur</h1>
+            <p>Gérez la reconnaissance faciale et les présences des étudiants</p>
+        </div>
+        
+        <div class="cards-grid">
+            <!-- CARTE 1 : Gestion des étudiants -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>👨‍🎓 Gestion des étudiants</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Ajouter, modifier ou supprimer</strong><br>Gérez la liste des étudiants inscrits dans le système.</p>
+                    <p>⚠️ Attention : La suppression d'un étudiant efface également son historique de présence.</p>
+                </div>
+                <div class="card-footer">
+                    <button onclick="window.location.href='/students'" class="btn btn-secondary">📋 Gérer les étudiants</button>
+                </div>
+            </div>
+            
+            <!-- CARTE 2 : Importation photos étudiant -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>📸 Importer photos étudiant</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Ajouter des photos d'un étudiant existant</strong><br>Sélectionnez un étudiant et téléchargez ses photos (minimum 5).</p>
+                    <p>✅ Les photos seront automatiquement ajoutées au dataset et des embeddings seront générés.</p>
+                </div>
+                <div class="card-footer">
+                    <button onclick="openImportModal()" class="btn btn-primary">📸 Importer des photos</button>
+                </div>
+            </div>
+            
+            <!-- CARTE 3 : Lancement entraînement -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>🤖 Entraîner le modèle CNN</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>À utiliser après avoir ajouté de nouveaux étudiants ou photos</strong><br>Lance le traitement du dataset et l'entraînement du modèle.</p>
+                    <p>⚙️ Cette opération peut prendre plusieurs minutes.</p>
+                </div>
+                <div class="card-footer">
+                    <button onclick="startTraining()" class="btn btn-warning" id="trainBtn">🚀 Lancer l'entraînement</button>
+                </div>
+            </div>
+            
+            <!-- CARTE 4 : Reconnaissance et marquage de présence -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>✅ Reconnaissance & Présence</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Scanner les visages et marquer automatiquement la présence</strong><br>La webcam analyse les visages en temps réel.</p>
+                    <p>💡 Appuyez sur Q pour arrêter la reconnaissance.</p>
+                </div>
+                <div class="card-footer">
+                    <button onclick="startRecognition()" class="btn btn-warning" id="recogBtn">🎯 Lancer la reconnaissance</button>
+                </div>
+            </div>
+            
+            <!-- CARTE 5 : Rapports et statistiques -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>📊 Rapports & Statistiques</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Générer des rapports PDF</strong><br>Exportez les présences des étudiants.</p>
+                </div>
+                <div class="card-footer">
+                    <button onclick="generateReport()" class="btn btn-info">📄 Générer le rapport PDF</button>
+                </div>
+            </div>
+            
+            <!-- CARTE 6 : Liste des absents -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>📋 Absents du jour</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Voir les étudiants absents</strong><br>Affiche la liste des étudiants qui n'ont pas encore marqué leur présence aujourd'hui.</p>
+                </div>
+                <div class="card-footer">
+                    <button onclick="viewAbsents()" class="btn btn-secondary">👀 Voir les absents</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal pour importer des photos -->
+        <div id="importModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+            <div style="background:white; border-radius:20px; width:90%; max-width:500px;">
+                <div style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white; padding:20px; border-radius:20px 20px 0 0; display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="margin:0;">📸 Importer des photos</h3>
+                    <button onclick="closeImportModal()" style="background:none; border:none; color:white; font-size:24px; cursor:pointer;">&times;</button>
+                </div>
+                <div style="padding:25px;">
+                    <div class="form-group" style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px; font-weight:bold;">Étudiant</label>
+                        <select id="studentSelect" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;">
+                            <option value="">Chargement...</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px; font-weight:bold;">Photos (minimum 5)</label>
+                        <input type="file" id="photoInput" multiple accept="image/jpeg,image/png,image/jpg" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;">
+                        <small style="color:#666;">Sélectionnez au moins 5 photos du visage de l'étudiant</small>
+                    </div>
+                </div>
+                <div style="padding:20px; display:flex; gap:10px; justify-content:flex-end; border-top:1px solid #eee;">
+                    <button onclick="closeImportModal()" style="padding:10px 20px; background:#6c757d; color:white; border:none; border-radius:8px; cursor:pointer;">Annuler</button>
+                    <button onclick="uploadPhotos()" style="padding:10px 20px; background:#28a745; color:white; border:none; border-radius:8px; cursor:pointer;">Importer</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status-area" id="statusArea" style="display: none;">
+            <div class="status-title"><span>📡</span> État des opérations</div>
+            <div class="status-message" id="statusMessage">Aucune opération en cours...</div>
+        </div>
+    </div>
+    
+    <script>
+        let recognitionActive = false;
+        let trainingActive = false;
+        let statusCheckInterval = null;
+        let studentsList = [];
+        
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 4000);
+        }
+        
+        function updateStatus(message) {
+            const statusArea = document.getElementById('statusArea');
+            const statusMessage = document.getElementById('statusMessage');
+            if (message) {
+                statusArea.style.display = 'block';
+                statusMessage.innerHTML = message;
+            } else {
+                statusArea.style.display = 'none';
+            }
+        }
+        
+        function checkThreadStatus() {
+            fetch('/recognize/status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.active_threads && Object.keys(data.active_threads).length > 0) {
+                        let statusText = '';
+                        for (const [key, thread] of Object.entries(data.active_threads)) {
+                            if (thread.alive && key === 'recognition') {
+                                recognitionActive = true;
+                                statusText += `🎥 Reconnaissance ACTIVE - ${thread.name}<br>`;
+                                document.getElementById('recogBtn').disabled = true;
+                                document.getElementById('recogBtn').style.opacity = '0.6';
+                            }
+                        }
+                        if (statusText) updateStatus(statusText);
+                        else { updateStatus(''); recognitionActive = false; document.getElementById('recogBtn').disabled = false; document.getElementById('recogBtn').style.opacity = '1'; }
+                    } else {
+                        updateStatus('');
+                        recognitionActive = false;
+                        document.getElementById('recogBtn').disabled = false;
+                        document.getElementById('recogBtn').style.opacity = '1';
+                    }
+                })
+                .catch(error => console.error('Erreur:', error));
+        }
+        
+        async function loadStudentsForImport() {
+            try {
+                const response = await fetch('/students/api/students');
+                const students = await response.json();
+                studentsList = students;
+                const select = document.getElementById('studentSelect');
+                select.innerHTML = '<option value="">Sélectionner un étudiant</option>';
+                students.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s.id;
+                    option.textContent = `${s.nom} ${s.prenom} (${s.matricule})`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+        
+        function openImportModal() {
+            loadStudentsForImport();
+            document.getElementById('importModal').style.display = 'flex';
+            document.getElementById('photoInput').value = '';
+        }
+        
+        function closeImportModal() {
+            document.getElementById('importModal').style.display = 'none';
+        }
+        
+        async function uploadPhotos() {
+            const studentId = document.getElementById('studentSelect').value;
+            const photos = document.getElementById('photoInput').files;
+            
+            if (!studentId) {
+                showNotification('Veuillez sélectionner un étudiant', 'error');
+                return;
+            }
+            if (photos.length < 5) {
+                showNotification(`Veuillez sélectionner au moins 5 photos (${photos.length} sélectionnées)`, 'error');
+                return;
+            }
+            
+            showNotification('📤 Upload des photos en cours...', 'info');
+            
+            const formData = new FormData();
+            formData.append('student_id', studentId);
+            for (let i = 0; i < photos.length; i++) {
+                formData.append('photos', photos[i]);
+            }
+            
+            try {
+                const response = await fetch('/students/api/upload-photos', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showNotification(result.message, 'success');
+                    closeImportModal();
+                    showNotification('💡 N\'oubliez pas de relancer l\'entraînement du modèle !', 'info');
+                } else {
+                    showNotification('❌ ' + result.error, 'error');
+                }
+            } catch (error) {
+                showNotification('❌ Erreur lors de l\'upload', 'error');
+            }
+        }
+        
+        async function startTraining() {
+            if (trainingActive) {
+                showNotification('❌ Un entraînement est déjà en cours !', 'error');
+                return;
+            }
+            
+            showNotification('🚀 Démarrage de l\'entraînement... Cette opération peut prendre plusieurs minutes', 'info');
+            trainingActive = true;
+            document.getElementById('trainBtn').disabled = true;
+            document.getElementById('trainBtn').style.opacity = '0.6';
+            updateStatus('🔄 Entraînement en cours... Veuillez patienter');
+            
+            try {
+                const response = await fetch('/students/api/start-training', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showNotification(`✅ ${result.message}`, 'success');
+                } else {
+                    showNotification('❌ ' + result.error, 'error');
+                }
+            } catch (error) {
+                showNotification('❌ Erreur lors de l\'entraînement', 'error');
+            } finally {
+                trainingActive = false;
+                document.getElementById('trainBtn').disabled = false;
+                document.getElementById('trainBtn').style.opacity = '1';
+                updateStatus('');
+            }
+        }
+        
+        function startRecognition() {
+            if (recognitionActive) {
+                showNotification('❌ Une reconnaissance est déjà en cours !', 'error');
+                return;
+            }
+            showNotification('🎯 Démarrage de la reconnaissance... La webcam va s\'ouvrir', 'info');
+            showNotification('💡 Appuyez sur Q pour arrêter', 'info');
+            
+            fetch('/recognize')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) showNotification('❌ ' + data.error, 'error');
+                    else {
+                        showNotification('✅ ' + data.message, 'success');
+                        if (statusCheckInterval) clearInterval(statusCheckInterval);
+                        statusCheckInterval = setInterval(checkThreadStatus, 2000);
+                        setTimeout(() => checkThreadStatus(), 500);
+                    }
+                })
+                .catch(error => showNotification('❌ Erreur: ' + error, 'error'));
+        }
+        
+        function generateReport() {
+            showNotification('📄 Génération du rapport PDF...', 'info');
+            window.location.href = '/report';
+            setTimeout(() => showNotification('📥 Le téléchargement va commencer', 'success'), 1000);
+        }
+        
+        function viewAbsents() {
+            showNotification('📋 Récupération de la liste des absents...', 'info');
+            fetch('/absents')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) showNotification('✅ Aucun absent aujourd\'hui !', 'success');
+                    else {
+                        let message = `📋 ${data.length} étudiant(s) absent(s) aujourd'hui :\n`;
+                        data.forEach(s => message += `- ${s.nom} ${s.prenom}\n`);
+                        showNotification(message, 'info');
+                    }
+                })
+                .catch(error => showNotification('❌ Erreur: ' + error, 'error'));
+        }
+        
+        setInterval(checkThreadStatus, 5000);
+        setTimeout(() => checkThreadStatus(), 1000);
+        console.log('🎉 Dashboard RecoJY chargé !');
+    </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rapports</title>
+
+<style>
+body{font-family:Arial;background:#f4f6f9;margin:0;}
+
+.container{max-width:1100px;margin:30px auto;background:white;padding:20px;border-radius:10px;}
+
+.filters{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+
+input,button{padding:10px;border-radius:5px;border:1px solid #ccc;}
+
+button{background:#2E75B6;color:white;cursor:pointer;}
+
+table{width:100%;border-collapse:collapse;}
+
+th,td{padding:10px;border-bottom:1px solid #ddd;}
+
+th{background:#2E75B6;color:white;}
+
+.stats{display:flex;gap:10px;margin:10px 0;}
+
+.stat{flex:1;background:#eee;padding:10px;text-align:center;border-radius:8px;}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>📊 Rapport Présence</h2>
+
+<div class="filters">
+<input type="date" id="start">
+<input type="date" id="end">
+<button onclick="load()">Filtrer</button>
+<button onclick="csv()">CSV</button>
+<button onclick="pdf()">PDF</button>
+</div>
+
+<div class="stats">
+<div class="stat">Total: <span id="t">0</span></div>
+<div class="stat">Étudiants: <span id="u">0</span></div>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Nom</th><th>Prénom</th><th>Date</th><th>Heure</th>
+</tr>
+</thead>
+<tbody id="body"></tbody>
+</table>
+
+</div>
+
+<script>
+
+async function load(){
+let url="/api/report/attendance";
+
+const s=document.getElementById("start").value;
+const e=document.getElementById("end").value;
+
+if(s||e){
+url+=`?start_date=${s}&end_date=${e}`;
+}
+
+const res=await fetch(url);
+const data=await res.json();
+
+document.getElementById("body").innerHTML=
+data.map(r=>`
+<tr>
+<td>${r.nom}</td>
+<td>${r.prenom}</td>
+<td>${r.date}</td>
+<td>${r.heure}</td>
+</tr>`).join("");
+
+document.getElementById("t").innerText=data.length;
+document.getElementById("u").innerText=new Set(data.map(x=>x.matricule)).size;
+}
+
+function csv(){location.href="/export/csv";}
+function pdf(){location.href="/export/pdf";}
+
+load();
+
+</script>
+
+</body>
+</html>

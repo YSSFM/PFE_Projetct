@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>recoJY - Enregistrement Étudiant</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 1s ease-in-out;
+            position: relative;
+        }
+
+        /* Overlay sombre + flou */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1;
+        }
+
+        .dashboard-container {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 30px;
+            min-height: 100vh;
+        }
+
+        /* Sidebar - Étapes */
+        .steps-sidebar {
+            background: #0f111a;
+            border: 1px solid #1e2a3a;
+            border-radius: 24px;
+            padding: 30px 20px;
+            height: fit-content;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .steps-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #1e2a3a;
+        }
+
+        .steps-header i {
+            font-size: 1.8rem;
+            color: #00d4ff;
+        }
+
+        .steps-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .steps-header p {
+            font-size: 0.75rem;
+            color: #5c7a9a;
+            margin-top: 4px;
+        }
+
+        .step-list {
+            list-style: none;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px 18px;
+            margin-bottom: 8px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .step-item.completed {
+            background: rgba(0, 212, 255, 0.05);
+            border-color: rgba(0, 212, 255, 0.2);
+        }
+
+        .step-item.active {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: #00d4ff;
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.15);
+        }
+
+        .step-item:hover:not(.disabled) {
+            background: rgba(0, 212, 255, 0.05);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: #080a10;
+            border: 1px solid #1e2a3a;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #8ca3ba;
+            transition: all 0.2s ease;
+        }
+
+        .step-item.active .step-number {
+            background: linear-gradient(135deg, #00d4ff, #0088aa);
+            border-color: #00d4ff;
+            color: white;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+        }
+
+        .step-item.completed .step-number {
+            background: #00d4ff20;
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .step-info h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 3px;
+        }
+
+        .step-info p {
+            font-size: 0.7rem;
+            color: #5c7a9a;
+        }
+
+        .step-status {
+            margin-left: auto;
+            font-size: 0.7rem;
+        }
+
+        .step-status i {
+            color: #00d4ff;
+        }
+
+        /* Main Content */
+        .main-content {
+            background: #0f111a;
+            border: 1px solid #1e2a3a;
+            border-radius: 24px;
+            padding: 35px 40px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .step-title {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #1e2a3a;
+        }
+
+        .step-title h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .step-title p {
+            color: #8ca3ba;
+            font-size: 0.85rem;
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            color: #8ca3ba;
+            font-weight: 500;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .form-group label i {
+            margin-right: 6px;
+            color: #00d4ff;
+            width: 18px;
+        }
+
+        .form-group input,
+        .form-group select {
+            background: #080a10;
+            border: 1px solid #1e2a3a;
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: #f1f5f9;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.2);
+        }
+
+        .form-group input::placeholder {
+            color: #3a4a6a;
+        }
+
+        /* Zone de capture webcam */
+        .webcam-section {
+            background: #080a10;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .webcam-preview {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        #video {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 12px;
+            border: 1px solid #1e2a3a;
+            background: #000;
+        }
+
+        .capture-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .btn-capture, .btn-upload {
+            background: linear-gradient(135deg, #00d4ff, #0088aa);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-capture:hover, .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-clear {
+            background: #ef4444;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Grille des photos */
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .photo-card {
+            position: relative;
+            background: #080a10;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #1e2a3a;
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .photo-card .remove-photo {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        /* Upload zone */
+        .upload-zone {
+            background: #080a10;
+            border: 1px dashed #1e2a3a;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .upload-zone:hover {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.02);
+        }
+
+        .upload-zone i {
+            font-size: 2.5rem;
+            color: #00d4ff;
+            margin-bottom: 12px;
+        }
+
+        .upload-zone p {
+            color: #8ca3ba;
+            font-size: 0.85rem;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #1e2a3a;
+        }
+
+        .btn-prev, .btn-next, .btn-submit {
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-prev {
+            background: transparent;
+            border: 1px solid #1e2a3a;
+            color: #8ca3ba;
+        }
+
+        .btn-prev:hover {
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .btn-next, .btn-submit {
+            background: linear-gradient(135deg, #00d4ff, #0088aa);
+            border: none;
+            color: white;
+        }
+
+        .btn-next:hover, .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Top bar retour */
+        .top-bar-mini {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            color: #8ca3ba;
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            background: #080a10;
+            border: 1px solid #1e2a3a;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #00d4ff;
+            border-color: #00d4ff;
+        }
+
+        /* Progress indicator */
+        .progress-bar {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #1e2a3a;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            color: #5c7a9a;
+            font-size: 0.7rem;
+            margin-bottom: 8px;
+        }
+
+        .progress-track {
+            height: 4px;
+            background: #1e2a3a;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #0088aa);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .info-badge {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #00d4ff;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            .main-content {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <!-- Sidebar avec les étapes -->
+    <aside class="steps-sidebar">
+        <div class="steps-header">
+            <i class="fas fa-clipboard-list"></i>
+            <div>
+                <h2>Inscription</h2>
+                <p>Nouvel étudiant</p>
+            </div>
+        </div>
+
+        <ul class="step-list">
+            <li class="step-item" data-step="1" onclick="goToStep(1)">
+                <div class="step-number">1</div>
+                <div class="step-info">
+                    <h4>Identité</h4>
+                    <p>Informations personnelles</p>
+                </div>
+                <div class="step-status" id="step1-status"></div>
+            </li>
+            <li class="step-item" data-step="2" onclick="goToStep(2)">
+                <div class="step-number">2</div>
+                <div class="step-info">
+                    <h4>Académique</h4>
+                    <p>Filière, année, semestre</p>
+                </div>
+                <div class="step-status" id="step2-status"></div>
+            </li>
+            <li class="step-item" data-step="3" onclick="goToStep(3)">
+                <div class="step-number">3</div>
+                <div class="step-info">
+                    <h4>Contact</h4>
+                    <p>Email et téléphone</p>
+                </div>
+                <div class="step-status" id="step3-status"></div>
+            </li>
+            <li class="step-item" data-step="4" onclick="goToStep(4)">
+                <div class="step-number">4</div>
+                <div class="step-info">
+                    <h4>Biométrie</h4>
+                    <p>Photos (3 minimum)</p>
+                </div>
+                <div class="step-status" id="step4-status"></div>
+            </li>
+        </ul>
+
+        <div class="progress-bar">
+            <div class="progress-text">
+                <span>Progression</span>
+                <span id="progress-percent">0%</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Formulaire principal -->
+    <main class="main-content">
+        <div class="top-bar-mini">
+            <a href="{{ url_for('student.accueil') }}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Retour au Dashboard
+            </a>
+        </div>
+
+        <form id="student-form" method="POST" action="{{ url_for('student.ajouter_etudiant') }}" enctype="multipart/form-data">
+            <!-- Étape 1 : Identité -->
+            <div id="step-1" class="step-content">
+                <div class="step-title">
+                    <h1><i class="fas fa-user-circle"></i> Identité</h1>
+                    <p>Veuillez renseigner les informations d'état civil de l'étudiant</p>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-id-card"></i> CNE / MASSAR</label>
+                        <input type="text" name="CNEMASSAR" id="CNEMASSAR" placeholder="Ex: M123456789" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-venus-mars"></i> Genre / Sexe</label>
+                        <select name="SEX" id="SEX">
+                            <option value="M">Masculin</option>
+                            <option value="F">Féminin</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Nom</label>
+                        <input type="text" name="NOM" id="NOM" placeholder="Nom de famille" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Prénom</label>
+                        <input type="text" name="PRENOM" id="PRENOM" placeholder="Prénom(s)" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Étape 2 : Académique -->
+            <div id="step-2" class="step-content" style="display:none;">
+                <div class="step-title">
+                    <h1><i class="fas fa-graduation-cap"></i> Parcours Académique</h1>
+                    <p>Informations sur la filière et le cursus</p>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-building"></i> Département</label>
+                        <select name="ID_DEPARTEMENT" id="ID_DEPARTEMENT" required>
+                            <option value="">Sélectionnez un département</option>
+                            {% for dept in departements %}
+                            <option value="{{ dept.ID_DEPARTEMENT }}">{{ dept.NOM_DEPARTEMENT }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-code-branch"></i> Option / Filière</label>
+                        <input type="text" name="OPTIONS" id="OPTIONS" placeholder="Ex: Génie Logiciel" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-alt"></i> Année Académique</label>
+                        <input type="text" name="ANNEE_ACADEMIQUE" id="ANNEE_ACADEMIQUE" placeholder="Ex: 2025-2026" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-layer-group"></i> Semestre</label>
+                        <input type="text" name="SEMESTRE" id="SEMESTRE" placeholder="Ex: S1, S2, S3..." required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Étape 3 : Contact -->
+            <div id="step-3" class="step-content" style="display:none;">
+                <div class="step-title">
+                    <h1><i class="fas fa-address-card"></i> Coordonnées</h1>
+                    <p>Moyens de contact de l'étudiant</p>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label><i class="fas fa-envelope"></i> Adresse E-mail</label>
+                        <input type="email" name="MAIL" id="MAIL" placeholder="et.nom@edu.umi.ac.ma" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label><i class="fas fa-phone-alt"></i> N° Téléphone</label>
+                        <input type="text" name="TELEPHONE" id="TELEPHONE" placeholder="+212 6XX XXX XXX" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Étape 4 : Biométrie + Validation (Capture multiple 3-10 photos) -->
+            <div id="step-4" class="step-content" style="display:none;">
+                <div class="step-title">
+                    <h1><i class="fas fa-camera-retro"></i> Enregistrement Biométrique</h1>
+                    <p>Capturez ou téléchargez au moins 3 photos pour la reconnaissance faciale</p>
+                </div>
+
+                <!-- Section Webcam -->
+                <div class="webcam-section">
+                    <div class="webcam-preview">
+                        <video id="video" autoplay muted></video>
+                    </div>
+                    <div class="capture-buttons">
+                        <button type="button" class="btn-capture" onclick="capturePhoto()">
+                            <i class="fas fa-camera"></i> Prendre une photo
+                        </button>
+                        <button type="button" class="btn-clear" onclick="clearAllPhotos()">
+                            <i class="fas fa-trash-alt"></i> Tout effacer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Upload de fichiers -->
+                <div class="upload-zone" onclick="document.getElementById('photo_files').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Ou cliquez ici pour sélectionner plusieurs photos</p>
+                    <p class="small">Formats acceptés : JPG, PNG, JPEG</p>
+                    <input type="file" name="photo_files" id="photo_files" accept="image/*" multiple style="display:none;">
+                </div>
+
+                <!-- Grille d'affichage des photos capturées -->
+                <div id="photos-grid" class="photos-grid"></div>
+
+                <!-- Compteur et validation -->
+                <div class="info-badge" id="photo-counter">
+                    <i class="fas fa-info-circle"></i> 0/3 photos minimum requises
+                </div>
+
+                <!-- Champ caché pour stocker les photos en base64 -->
+                <input type="hidden" name="photos_base64" id="photos_base64">
+            </div>
+
+            <!-- Boutons de navigation -->
+            <div class="nav-buttons">
+                <button type="button" class="btn-prev" id="prevBtn" onclick="changeStep(-1)">
+                    <i class="fas fa-chevron-left"></i> Précédent
+                </button>
+                <button type="button" class="btn-next" id="nextBtn" onclick="changeStep(1)">
+                    Suivant <i class="fas fa-chevron-right"></i>
+                </button>
+                <button type="submit" class="btn-submit" id="submitBtn" style="display:none;">
+                    <i class="fas fa-save"></i> Enregistrer l'étudiant
+                </button>
+            </div>
+        </form>
+    </main>
+</div>
+
+<script>
+    // Variables pour les photos
+    let capturedPhotos = [];  // Stocke les URLs base64 des photos
+    let videoStream = null;
+    const MIN_PHOTOS = 3;
+    const MAX_PHOTOS = 10;
+
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    // Images de fond dynamiques floutées
+    const backgrounds = [
+        "url('/static/images/bg_abstract.jpg')",
+        "url('/static/images/bg_minimal.jpg')",
+        "url('/static/images/background.jpg')"
+    ];
+    
+    let currentBg = 0;
+    
+    function changeBackground() {
+        currentBg = (currentBg + 1) % backgrounds.length;
+        document.body.style.backgroundImage = backgrounds[currentBg];
+    }
+    
+    setInterval(changeBackground, 5000);
+    document.body.style.backgroundImage = backgrounds[0];
+
+    // Initialisation de la webcam
+    async function initWebcam() {
+        try {
+            videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const video = document.getElementById('video');
+            if (video) video.srcObject = videoStream;
+        } catch(e) {
+            console.error('Erreur accès webcam:', e);
+        }
+    }
+
+    // Capture photo depuis la webcam
+    function capturePhoto() {
+        if (capturedPhotos.length >= MAX_PHOTOS) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Limite atteinte',
+                text: `Maximum ${MAX_PHOTOS} photos autorisées`,
+                confirmButtonColor: '#00d4ff',
+                background: '#0f111a',
+                color: '#e2e8f0'
+            });
+            return;
+        }
+
+        const video = document.getElementById('video');
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Convertir en base64
+        const photoData = canvas.toDataURL('image/jpeg', 0.8);
+        capturedPhotos.push(photoData);
+        updatePhotosGrid();
+    }
+
+    // Mise à jour de la grille des photos
+    function updatePhotosGrid() {
+        const grid = document.getElementById('photos-grid');
+        const counter = document.getElementById('photo-counter');
+        
+        grid.innerHTML = '';
+        capturedPhotos.forEach((photo, index) => {
+            const photoCard = document.createElement('div');
+            photoCard.className = 'photo-card';
+            photoCard.innerHTML = `
+                <img src="${photo}" alt="Photo ${index+1}">
+                <button type="button" class="remove-photo" onclick="removePhoto(${index})">✕</button>
+            `;
+            grid.appendChild(photoCard);
+        });
+        
+        // Mettre à jour le compteur
+        const count = capturedPhotos.length;
+        counter.innerHTML = `<i class="fas fa-info-circle"></i> ${count}/${MAX_PHOTOS} photos (minimum ${MIN_PHOTOS} requis)`;
+        
+        if (count >= MIN_PHOTOS) {
+            counter.style.borderColor = '#10b981';
+            counter.style.color = '#10b981';
+        } else {
+            counter.style.borderColor = 'rgba(0, 212, 255, 0.3)';
+            counter.style.color = '#00d4ff';
+        }
+        
+        // Mettre à jour le champ caché
+        document.getElementById('photos_base64').value = JSON.stringify(capturedPhotos);
+        
+        // Mettre à jour la progression des étapes
+        updateSteps();
+    }
+
+    // Supprimer une photo
+    function removePhoto(index) {
+        capturedPhotos.splice(index, 1);
+        updatePhotosGrid();
+    }
+
+    // Effacer toutes les photos
+    function clearAllPhotos() {
+        Swal.fire({
+            title: 'Confirmation',
+            text: 'Voulez-vous vraiment effacer toutes les photos ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#1e2a3a',
+            confirmButtonText: 'Oui, effacer',
+            cancelButtonText: 'Annuler',
+            background: '#0f111a',
+            color: '#e2e8f0'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                capturedPhotos = [];
+                updatePhotosGrid();
+            }
+        });
+    }
+
+    // Gestion du téléchargement multiple
+    document.getElementById('photo_files').addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        if (capturedPhotos.length + files.length > MAX_PHOTOS) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Limite dépassée',
+                text: `Vous ne pouvez pas ajouter plus de ${MAX_PHOTOS} photos au total`,
+                confirmButtonColor: '#00d4ff',
+                background: '#0f111a',
+                color: '#e2e8f0'
+            });
+            return;
+        }
+        
+        files.forEach(file => {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    capturedPhotos.push(event.target.result);
+                    updatePhotosGrid();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Réinitialiser l'input
+        e.target.value = '';
+    });
+
+    // Mise à jour des étapes dans la sidebar
+    function updateSteps() {
+        for (let i = 1; i <= totalSteps; i++) {
+            const stepItem = document.querySelector(`.step-item[data-step="${i}"]`);
+            const statusSpan = document.getElementById(`step${i}-status`);
+            
+            stepItem.classList.remove('active');
+            if (i === currentStep) {
+                stepItem.classList.add('active');
+            }
+            
+            if (isStepCompleted(i)) {
+                stepItem.classList.add('completed');
+                if (statusSpan) statusSpan.innerHTML = '<i class="fas fa-check-circle"></i>';
+            } else {
+                stepItem.classList.remove('completed');
+                if (statusSpan) statusSpan.innerHTML = '';
+            }
+        }
+        
+        let completedCount = 0;
+        for (let i = 1; i <= totalSteps; i++) {
+            if (isStepCompleted(i)) completedCount++;
+        }
+        const percent = (completedCount / totalSteps) * 100;
+        document.getElementById('progress-percent').innerText = Math.round(percent) + '%';
+        document.getElementById('progress-fill').style.width = percent + '%';
+    }
+
+    // Vérifier si une étape est complétée
+    function isStepCompleted(step) {
+        switch(step) {
+            case 1:
+                const cne = document.getElementById('CNEMASSAR')?.value;
+                const nom = document.getElementById('NOM')?.value;
+                const prenom = document.getElementById('PRENOM')?.value;
+                return cne && cne.trim() !== '' && nom && nom.trim() !== '' && prenom && prenom.trim() !== '';
+            case 2:
+                const dept = document.getElementById('ID_DEPARTEMENT')?.value;
+                const option = document.getElementById('OPTIONS')?.value;
+                const annee = document.getElementById('ANNEE_ACADEMIQUE')?.value;
+                const semestre = document.getElementById('SEMESTRE')?.value;
+                return dept && dept.trim() !== '' && option && option.trim() !== '' && annee && annee.trim() !== '' && semestre && semestre.trim() !== '';
+            case 3:
+                const mail = document.getElementById('MAIL')?.value;
+                const tel = document.getElementById('TELEPHONE')?.value;
+                return mail && mail.trim() !== '' && tel && tel.trim() !== '';
+            case 4:
+                return capturedPhotos.length >= MIN_PHOTOS;
+            default:
+                return false;
+        }
+    }
+
+    // Changer d'étape
+    function changeStep(delta) {
+        const newStep = currentStep + delta;
+        if (newStep < 1 || newStep > totalSteps) return;
+        
+        if (delta === 1 && !isStepCompleted(currentStep)) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Étape incomplète',
+                text: 'Veuillez remplir tous les champs de cette étape avant de continuer.',
+                confirmButtonColor: '#00d4ff',
+                background: '#0f111a',
+                color: '#e2e8f0'
+            });
+            return;
+        }
+        
+        // Cacher l'étape actuelle
+        document.getElementById(`step-${currentStep}`).style.display = 'none';
+        
+        currentStep = newStep;
+        document.getElementById(`step-${currentStep}`).style.display = 'block';
+        
+        // Activer la webcam si on arrive à l'étape 4
+        if (currentStep === 4 && !videoStream) {
+            initWebcam();
+        }
+        
+        // Gérer l'affichage des boutons
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        if (currentStep === 1) {
+            prevBtn.style.display = 'none';
+        } else {
+            prevBtn.style.display = 'inline-flex';
+        }
+        
+        if (currentStep === totalSteps) {
+            nextBtn.style.display = 'none';
+            submitBtn.style.display = 'inline-flex';
+        } else {
+            nextBtn.style.display = 'inline-flex';
+            submitBtn.style.display = 'none';
+        }
+        
+        updateSteps();
+    }
+
+    // Aller directement à une étape spécifique
+    function goToStep(step) {
+        if (step === currentStep) return;
+        
+        let allPreviousCompleted = true;
+        for (let i = 1; i < step; i++) {
+            if (!isStepCompleted(i)) {
+                allPreviousCompleted = false;
+                break;
+            }
+        }
+        
+        if (!allPreviousCompleted) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Accès bloqué',
+                text: 'Veuillez compléter les étapes précédentes dans l\'ordre.',
+                confirmButtonColor: '#00d4ff',
+                background: '#0f111a',
+                color: '#e2e8f0'
+            });
+            return;
+        }
+        
+        document.getElementById(`step-${currentStep}`).style.display = 'none';
+        currentStep = step;
+        document.getElementById(`step-${currentStep}`).style.display = 'block';
+        
+        if (currentStep === 4 && !videoStream) {
+            initWebcam();
+        }
+        
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        if (currentStep === 1) {
+            prevBtn.style.display = 'none';
+        } else {
+            prevBtn.style.display = 'inline-flex';
+        }
+        
+        if (currentStep === totalSteps) {
+            nextBtn.style.display = 'none';
+            submitBtn.style.display = 'inline-flex';
+        } else {
+            nextBtn.style.display = 'inline-flex';
+            submitBtn.style.display = 'none';
+        }
+        
+        updateSteps();
+    }
+
+    // Écouter les changements dans les champs
+    const inputs = document.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        input.addEventListener('change', () => updateSteps());
+        input.addEventListener('keyup', () => updateSteps());
+    });
+
+    // Soumission du formulaire
+    document.getElementById('student-form').addEventListener('submit', function(e) {
+        if (capturedPhotos.length < MIN_PHOTOS) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Photos insuffisantes',
+                text: `Veuillez capturer ou télécharger au moins ${MIN_PHOTOS} photos.`,
+                confirmButtonColor: '#00d4ff',
+                background: '#0f111a',
+                color: '#e2e8f0'
+            });
+            return false;
+        }
+        
+        // Ajouter les photos en base64 au formulaire
+        document.getElementById('photos_base64').value = JSON.stringify(capturedPhotos);
+        return true;
+    });
+
+    // Initialisation
+    updateSteps();
+    
+    if (currentStep === 1) {
+        document.getElementById('prevBtn').style.display = 'none';
+    }
+
+    // Nettoyer la webcam à la fermeture
+    window.addEventListener('beforeunload', () => {
+        if (videoStream) {
+            videoStream.getTracks().forEach(track => track.stop());
+        }
+    });
+
+    // Message de succès
+    {% if success %}
+        Swal.fire({
+            icon: 'success',
+            title: 'Étudiant enregistré',
+            text: 'Les données ont été stockées et le modèle s\'est réentraîné automatiquement !',
+            confirmButtonText: 'Parfait',
+            confirmButtonColor: '#00d4ff',
+            background: '#0f111a',
+            color: '#e2e8f0'
+        }).then(() => {
+            window.location.href = "{{ url_for('student.accueil') }}";
+        });
+    {% endif %}
+</script>
+</body>
+</html>

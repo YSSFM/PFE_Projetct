@@ -1,0 +1,110 @@
+/* style_presence.css */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Raleway', sans-serif;
+  background-image: url("../static/bg.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 40px;
+  width: 90%;
+  max-width: 1000px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  margin: 40px 20px;
+}
+
+h1 {
+  font-size: 2.2em;
+  color: #101111;
+  text-align: center;
+  margin-top: 0;
+}
+
+.etudiant {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.4);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+/* Alignement propre de la section compteurs (Absences/Présences) */
+.nombre {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.nombre input[type="text"] {
+  width: 80px;
+  text-align: center;
+  font-weight: bold;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 5px;
+}
+
+input[type="date"],
+input[type="text"],
+select {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+/* Groupes de recherche et boutons */
+.search,
+.boutton_calcul,
+.boutton_recherche,
+.container_rapport {
+  margin: 15px 0;
+}
+
+input[type="submit"] {
+  padding: 10px 25px;
+  background-color: #0277bd;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+input[type="submit"]:hover {
+  background-color: #01579b;
+}
+
+.boutton_accueil {
+  margin-top: 20px;
+}
+
+.boutton_accueil a {
+  text-decoration: none;
+  font-size: 22px;
+  color: #101111;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 8px 16px;
+  border-radius: 50%;
+}

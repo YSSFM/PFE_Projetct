@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détection Faciale</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_detection.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>📸 Détection Faciale</h1>
+        <p>Appuyez sur le bouton ci-dessous pour scanner et marquer la présence des étudiant(e)s.</p>
+
+        <form action="{{ url_for('scanner') }}" method="post">
+            <button type="submit" class="btn">Scanner</button>
+        </form>
+
+        {% if success %}
+            <div class="message">✅ Présence enregistrée avec succès.</div>
+        {% elif error %}
+            <div class="message error">❌ Une erreur est survenue pendant la détection.</div>
+        {% endif %}
+
+        <br><br>
+    </div>
+    <div class="boutton_accueil"><a href="{{ url_for('accueil') }}">⬅</a></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    {% if etudiant_inconnu %}
+    Swal.fire({
+        title: 'Étudiant(e) inconnu(e)',
+        text: "Souhaitez-vous enregistrer un(e) nouvel(le) étudiant(e) ?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Oui, enregistrer',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "{{ url_for('detail_etudiant') }}";
+        }
+    });
+    {% elif presence_enregistree %}
+    Swal.fire({
+        title: 'Présence enregistrée',
+        html: "<strong>{{ nom }}</strong><br>CNE : {{ cne }}<br>✅ Présence enregistrée avec succès",
+        icon: 'success',
+        confirmButtonText: 'OK'
+    });
+    {% elif presence_deja %}
+    Swal.fire({
+        title: 'Déjà enregistré(e)',
+        html: "<strong>{{ nom }}</strong><br>CNE : {{ cne }}<br>ℹ️ Présence déjà enregistrée",
+        icon: 'info',
+        confirmButtonText: 'OK'
+    });
+    {% endif %}
+    </script>
+</body>
+</html>

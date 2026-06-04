@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>recoJY - Accueil</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: background-image 1s ease-in-out;
+      position: relative;
+    }
+
+    /* Overlay sombre + flou intégré via backdrop-filter sur un pseudo-élément */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1;
+    }
+
+    .dashboard-container {
+      position: relative;
+      z-index: 2;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 30px;
+    }
+
+    /* Sidebar styles - métallique sombre */
+    .sidebar {
+      background: #0f111a;
+      border: 1px solid #1e2a3a;
+      border-radius: 24px;
+      padding: 30px 20px;
+      color: #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: calc(100vh - 80px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 40px;
+    }
+
+    .brand i {
+      background: linear-gradient(135deg, #00d4ff 0%, #0a5c7e 100%);
+      padding: 10px;
+      border-radius: 12px;
+      color: white;
+    }
+
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: #8ca3ba;
+      text-decoration: none;
+      padding: 14px 18px;
+      border-radius: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .nav-item.active a, .nav-item a:hover {
+      color: #00d4ff;
+      background: rgba(0, 212, 255, 0.08);
+      border-color: rgba(0, 212, 255, 0.3);
+      box-shadow: 0 0 8px rgba(0, 212, 255, 0.2);
+    }
+
+    .user-profile {
+      background: #080a10;
+      padding: 15px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #1e2a3a;
+    }
+
+    .user-avatar {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #00d4ff, #0088aa);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: white;
+    }
+
+    /* Main Content styles */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .top-bar {
+      background: #0f111a;
+      border: 1px solid #1e2a3a;
+      border-radius: 24px;
+      padding: 20px 40px;
+      color: #e2e8f0;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .welcome-text h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      background: linear-gradient(135deg, #ffffff 0%, #00d4ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .welcome-text p {
+      color: #8ca3ba;
+      font-size: 0.95rem;
+    }
+
+    .grid-menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    .menu-card {
+      background: #0f111a;
+      border-radius: 24px;
+      padding: 35px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: 1px solid #1e2a3a;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .menu-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #00d4ff, #0088aa);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .menu-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .menu-card:hover {
+      transform: translateY(-5px);
+      border-color: #00d4ff;
+      box-shadow: 0 20px 30px -15px rgba(0, 212, 255, 0.2);
+    }
+
+    .card-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
+
+    .etudiants .card-icon, .gestion .card-icon { 
+      background: linear-gradient(135deg, #00d4ff20, #0088aa20); 
+      color: #00d4ff; 
+      border: 1px solid #00d4ff40;
+    }
+    .reconnaissance .card-icon { 
+      background: linear-gradient(135deg, #00d4ff20, #0088aa20); 
+      color: #00d4ff; 
+      border: 1px solid #00d4ff40;
+    }
+
+    .card-info h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 8px;
+    }
+
+    .card-info p {
+      color: #8ca3ba;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .quick-stats {
+      background: #0f111a;
+      border: 1px solid #1e2a3a;
+      border-radius: 24px;
+      padding: 30px;
+      color: #e2e8f0;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .quick-stats h2 {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-item {
+      background: #080a10;
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid #1e2a3a;
+    }
+
+    .stat-val {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #00d4ff;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-lbl {
+      color: #8ca3ba;
+      font-size: 0.85rem;
+      font-family: 'Courier New', monospace;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <i class="fas fa-microchip"></i>
+          <span>recoJY</span>
+        </div>
+        <ul class="nav-menu">
+          <li class="nav-item active">
+            <a href="#"><i class="fas fa-th-large"></i> Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ url_for('student.detail_etudiant') }}"><i class="fas fa-user-plus"></i> Inscriptions</a>
+          </li>
+          <!-- NOUVEAU : Gérer les étudiants -->
+          <li class="nav-item">
+            <a href="{{ url_for('student.gerer_etudiants') }}"><i class="fas fa-users-cog"></i> Gérer les étudiants</a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ url_for('presence.detection_faciale') }}"><i class="fas fa-camera"></i> Scan Live</a>
+          </li>
+		  <li class="nav-item">
+            <a href="{{ url_for('student.rapport_page') }}"><i class="fas fa-file-alt"></i>Générer Rapports</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" onclick="showInfo()"><i class="fas fa-info-circle"></i> À propos</a>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="user-profile">
+        <div class="user-avatar">
+          {{ session['user'][0].upper() if 'user' in session else 'A' }}
+        </div>
+        <div style="flex:1;">
+          <h4 style="font-size:0.95rem; font-weight:600;">{{ session['user'] if 'user' in session else 'Admin' }}</h4>
+          <p style="font-size:0.8rem; color: #5c7a9a;">Session active</p>
+        </div>
+        <a href="{{ url_for('auth.login_page') }}" style="color: #8ca3ba;"><i class="fas fa-sign-out-alt"></i></a>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="top-bar">
+        <div class="welcome-text">
+          <h1>Tableau de bord</h1>
+          <p>Système de gestion de présence par reconnaissance faciale</p>
+        </div>
+      </header>
+
+      <section class="grid-menu">
+        <div class="menu-card etudiants" onclick="window.location.href='{{ url_for('student.detail_etudiant') }}'">
+          <div class="card-icon"><i class="fas fa-user-graduate"></i></div>
+          <div class="card-info">
+            <h3>Fiches Étudiants</h3>
+            <p>Ajouter de nouveaux étudiants, capturer les empreintes visuelles et gérer la base de données.</p>
+          </div>
+        </div>
+
+        <!-- NOUVEAU : Carte Gestion des étudiants -->
+        <div class="menu-card gestion" onclick="window.location.href='{{ url_for('student.gerer_etudiants') }}'">
+          <div class="card-icon"><i class="fas fa-users-cog"></i></div>
+          <div class="card-info">
+            <h3>Gérer les étudiants</h3>
+            <p>Consulter, modifier ou supprimer les étudiants existants et leurs photos biométriques.</p>
+          </div>
+        </div>
+
+        <div class="menu-card reconnaissance" onclick="window.location.href='{{ url_for('presence.detection_faciale') }}'">
+          <div class="card-icon"><i class="fas fa-video"></i></div>
+          <div class="card-info">
+            <h3>Scanner les visages</h3>
+            <p>Lancer la détection live avec analyse anti-spoofing de clignement.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="quick-stats">
+        <div class="stats-container">
+          <div class="stat-item">
+            <div class="stat-val">Système de Gestion Intelligente des Présences Etudiantes avec la Reconnaissance Faciale</div>
+            <div class="stat-lbl">CNN - Transfer Learning</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Images de fond dynamiques (flou appliqué via CSS backdrop-filter sur body::before)
+    const backgrounds = [
+      "url('/static/images/bg_abstract.jpg')",
+      "url('/static/images/bg_minimal.jpg')",
+      "url('/static/images/background.jpg')"
+    ];
+    
+    let currentBg = 0;
+    
+    function changeBackground() {
+      currentBg = (currentBg + 1) % backgrounds.length;
+      document.body.style.backgroundImage = backgrounds[currentBg];
+    }
+    
+    setInterval(changeBackground, 5000);
+    document.body.style.backgroundImage = backgrounds[0];
+
+    function showInfo() {
+      Swal.fire({
+        title: '<strong style="color:#00d4ff;">recoJY v2.0</strong>',
+        html: `
+          <div style="text-align: left; font-size: 0.95rem; line-height: 1.6; background:#0a0c12; color:#e2e8f0;">
+            <div style="background: linear-gradient(135deg, #00d4ff 0%, #006688 100%); padding: 20px; border-radius: 12px; color: white; margin-bottom: 15px; text-align: center;">
+              <i class="fas fa-microchip" style="font-size: 2rem;"></i>
+              <p style="margin-top: 10px;"><strong>Intelligent Recognition System</strong></p>
+            </div>
+            <p><strong style="color:#00d4ff;">📌 Technologies utilisées :</strong></p>
+            <ul>
+              <li>Flask / Python</li>
+              <li>Double CNN (Reconnaissance faciale)</li>
+              <li>OpenCV (Traitement d'images)</li>
+              <li>TensorFlow / Keras</li>
+            </ul>
+            <p style="margin-top: 15px;"><strong style="color:#00d4ff;">⚡ Fonctionnalités :</strong></p>
+            <ul>
+              <li>✓ Authentification sécurisée</li>
+              <li>✓ Enregistrement biométrique</li>
+              <li>✓ Reconnaissance anti-spoofing</li>
+              <li>✓ Gestion des présences en temps réel</li>
+              <li>✓ Génération de rapports</li>
+            </ul>
+            <hr style="margin: 15px 0; border-color:#1e2a3a;">
+            <p style="text-align: center; font-size: 0.85rem;">
+              <i class="fas fa-graduation-cap"></i> Projet de Fin d'Études 2026<br>
+              École Supérieure de Technologie - Meknès
+            </p>
+          </div>
+        `,
+        icon: 'info',
+        confirmButtonText: 'Fermer',
+        confirmButtonColor: '#00d4ff',
+        background: '#0f111a',
+        width: '520px'
+      });
+    }
+  </script>
+</body>
+</html>

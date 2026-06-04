@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Entraînement du Modèle</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_entrainement.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Entraînement du Modèle</h1>
+        <p>Cliquez sur le bouton ci-dessous pour encoder les visages et générer le modèle de reconnaissance.</p>
+
+        <form action="{{ url_for('lancer_entrainement') }}" method="post">
+            <button type="submit" class="btn">Lancer l'entraînement</button>
+        </form>
+
+        {% if success %}
+            <div class="message">✅ Modèle entraîné et sauvegardé avec succès.</div>
+        {% elif error %}
+            <div class="message error">❌ Une erreur est survenue pendant l'entraînement.</div>
+        {% endif %}
+
+        <br><br>
+    </div>
+    <div class="boutton_accueil"><a href="{{ url_for('accueil') }}">⬅</a></div>
+</body>
+</html>

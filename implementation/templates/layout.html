@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecoJY - Système de Reconnaissance Faciale</title>
+	  <title>RecoJY - Système de Reconnaissance Faciale</title>
+    
+    <!-- Lien vers le fichier CSS pour les pages admin (arrière-plan animé + glassmorphisme) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/background.css') }}">
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">
+        Reco<span>JY</span>
+    </div>
+    <div class="nav-links">
+        <a href="/">Accueil</a>
+         <a href="/admin/logout" class="logout-btn">🚪 Déconnexion</a>
+    </div>
+</div>
+
+<div class="container">
+    {% block content %}
+    {% endblock %}
+</div>
+
+</body>
+</html>
